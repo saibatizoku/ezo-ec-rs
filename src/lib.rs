@@ -10,31 +10,50 @@ mod errors { error_chain! {} }
 
 use errors::*;
 
-enum EcEzoCommand {
-    Baud(u16),
+#[derive(Debug)]
+pub enum Rate {
+    Bps300 = 300,
+    Bps1200 = 1200,
+    Bps2400 = 2400,
+    Bps9600 = 9600,
+    Bps19200 = 19200,
+    Bps38400 = 38400,
+    Bps57600 = 57600,
+    Bps115200 = 115200,
+}
+
+pub enum ConductivityCommand {
+    // `Baud` command
+    Baud(Rate),
+    // `Cal` command.
     CalibrationDry,
     CalibrationSinglePoint(f64),
-    CalibrationLowEnd(u16),
-    CalibrationHighEnd(u16),
+    CalibrationLow(f64),
+    CalibrationHigh(f64),
     CalibrationClear,
     CalibrationState,
-    DataloggerPeriod(u8),
-    DataloggerDisable,
-    DataloggerInterval,
+    // `I2C` command.
     DeviceAddress(u8),
+    // `I` command
     DeviceInformation,
+    // `Export`/`Import` command
     Export,
     ExportInfo,
     Import(String),
+    // `Factory` command
     Factory,
+    // `Find` command
     Find,
+    // `K` command
     ProbeTypePointOne,
     ProbeTypeOne,
     ProbeTypeTen,
     ProbeTypeStatus,
+    // `L` command
     LedOn,
     LedOff,
     LedState,
+    // `O` command
     OutputDisableConductivity,
     OutputEnableConductivity,
     OutputDisableTds,
@@ -44,12 +63,17 @@ enum EcEzoCommand {
     OutputDisableSpecificGravity,
     OutputEnableSpecificGravity,
     OutputStatus,
+    // `Plock` command
     ProtocolLockEnable,
     ProtocolLockDisable,
     ProtocolLockStatus,
+    // `R` command
     Reading,
+    // `Sleep` command
     Sleep,
+    // `Status` command
     Status,
+    // `T` command
     TemperatureCompensation,
     TemperatureCompensatedValue,
 }
@@ -61,7 +85,7 @@ mod tests {
 
     #[test]
     fn build_command_uart_300() {
-        let cmd = SetUart(Bauds::Bps300).build();
+        let cmd = Baud(Rate::Bps300).build();
         assert_eq!(cmd.command, "Baud,300\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -69,7 +93,7 @@ mod tests {
 
     #[test]
     fn build_command_uart_1200() {
-        let cmd = SetUart(Bauds::Bps1200).build();
+        let cmd = Baud(Rate::Bps1200).build();
         assert_eq!(cmd.command, "Baud,1200\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -77,7 +101,7 @@ mod tests {
 
     #[test]
     fn build_command_uart_2400() {
-        let cmd = SetUart(Bauds::Bps2400).build();
+        let cmd = Baud(Rate::Bps2400).build();
         assert_eq!(cmd.command, "Baud,2400\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -85,7 +109,7 @@ mod tests {
 
     #[test]
     fn build_command_uart_9600() {
-        let cmd = SetUart(Bauds::Bps9600).build();
+        let cmd = Baud(Rate::Bps9600).build();
         assert_eq!(cmd.command, "Baud,9600\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -93,7 +117,7 @@ mod tests {
 
     #[test]
     fn build_command_uart_19200() {
-        let cmd = SetUart(Bauds::Bps19200).build();
+        let cmd = Baud(Rate::Bps19200).build();
         assert_eq!(cmd.command, "Baud,19200\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -101,7 +125,7 @@ mod tests {
 
     #[test]
     fn build_command_uart_38400() {
-        let cmd = SetUart(Bauds::Bps38400).build();
+        let cmd = Baud(Rate::Bps38400).build();
         assert_eq!(cmd.command, "Baud,38400\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -109,7 +133,7 @@ mod tests {
 
     #[test]
     fn build_command_uart_57600() {
-        let cmd = SetUart(Bauds::Bps57600).build();
+        let cmd = Baud(Rate::Bps57600).build();
         assert_eq!(cmd.command, "Baud,57600\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -117,7 +141,7 @@ mod tests {
 
     #[test]
     fn build_command_uart_115200() {
-        let cmd = SetUart(Bauds::Bps115200).build();
+        let cmd = Baud(Rate::Bps115200).build();
         assert_eq!(cmd.command, "Baud,115200\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
