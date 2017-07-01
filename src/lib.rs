@@ -93,6 +93,7 @@ pub struct CommandOptions {
 pub enum CommandResponse {
     Ack,
     CalibrationState,
+    DeviceInformation,
     Export,
     ExportInfo,
 }
@@ -259,5 +260,13 @@ mod tests {
         assert_eq!(cmd.command, "F\0");
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_device_information() {
+        let cmd = DeviceInformation.build();
+        assert_eq!(cmd.command, "I\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::DeviceInformation));
     }
 }
