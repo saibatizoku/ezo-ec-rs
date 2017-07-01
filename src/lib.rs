@@ -252,4 +252,12 @@ mod tests {
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
     }
+
+    #[test]
+    fn build_command_find() {
+        let cmd = Find.build();
+        assert_eq!(cmd.command, "F\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
 }
