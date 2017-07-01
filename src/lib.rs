@@ -53,3 +53,73 @@ enum EcEzoCommand {
     TemperatureCompensation,
     TemperatureCompensatedValue,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use super::ConductivityCommand::*;
+
+    #[test]
+    fn build_command_uart_300() {
+        let cmd = SetUart(Bauds::Bps300).build();
+        assert_eq!(cmd.command, "Baud,300\0");
+        assert_eq!(cmd.delay, None);
+        assert_eq!(cmd.response, None);
+    }
+
+    #[test]
+    fn build_command_uart_1200() {
+        let cmd = SetUart(Bauds::Bps1200).build();
+        assert_eq!(cmd.command, "Baud,1200\0");
+        assert_eq!(cmd.delay, None);
+        assert_eq!(cmd.response, None);
+    }
+
+    #[test]
+    fn build_command_uart_2400() {
+        let cmd = SetUart(Bauds::Bps2400).build();
+        assert_eq!(cmd.command, "Baud,2400\0");
+        assert_eq!(cmd.delay, None);
+        assert_eq!(cmd.response, None);
+    }
+
+    #[test]
+    fn build_command_uart_9600() {
+        let cmd = SetUart(Bauds::Bps9600).build();
+        assert_eq!(cmd.command, "Baud,9600\0");
+        assert_eq!(cmd.delay, None);
+        assert_eq!(cmd.response, None);
+    }
+
+    #[test]
+    fn build_command_uart_19200() {
+        let cmd = SetUart(Bauds::Bps19200).build();
+        assert_eq!(cmd.command, "Baud,19200\0");
+        assert_eq!(cmd.delay, None);
+        assert_eq!(cmd.response, None);
+    }
+
+    #[test]
+    fn build_command_uart_38400() {
+        let cmd = SetUart(Bauds::Bps38400).build();
+        assert_eq!(cmd.command, "Baud,38400\0");
+        assert_eq!(cmd.delay, None);
+        assert_eq!(cmd.response, None);
+    }
+
+    #[test]
+    fn build_command_uart_57600() {
+        let cmd = SetUart(Bauds::Bps57600).build();
+        assert_eq!(cmd.command, "Baud,57600\0");
+        assert_eq!(cmd.delay, None);
+        assert_eq!(cmd.response, None);
+    }
+
+    #[test]
+    fn build_command_uart_115200() {
+        let cmd = SetUart(Bauds::Bps115200).build();
+        assert_eq!(cmd.command, "Baud,115200\0");
+        assert_eq!(cmd.delay, None);
+        assert_eq!(cmd.response, None);
+    }
+}
