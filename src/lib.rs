@@ -122,4 +122,49 @@ mod tests {
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
     }
+
+    #[test]
+    fn build_command_calibration_dry() {
+        let cmd = CalibrationDry.build();
+        assert_eq!(cmd.command, "Cal,dry\0");
+        assert_eq!(cmd.delay, Some(800));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    fn build_command_calibration_single_point() {
+        let cmd = CalibrationSinglePoint(84.).build();
+        assert_eq!(cmd.command, "Cal,84\0");
+        assert_eq!(cmd.delay, Some(800));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    fn build_command_calibration_high() {
+        let cmd = CalibrationHigh(12800.).build();
+        assert_eq!(cmd.command, "Cal,high,12800\0");
+        assert_eq!(cmd.delay, Some(800));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    fn build_command_calibration_low() {
+        let cmd = CalibrationLow(1413.).build();
+        assert_eq!(cmd.command, "Cal,low,1413\0");
+        assert_eq!(cmd.delay, Some(800));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_calibration_clear() {
+        let cmd = CalibrationClear.build();
+        assert_eq!(cmd.command, "Cal,clear\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_calibration_state() {
+        let cmd = CalibrationState.build();
+        assert_eq!(cmd.command, "Cal,?\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::CalibrationState));
+    }
 }
