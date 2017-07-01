@@ -10,6 +10,10 @@ mod errors { error_chain! {} }
 
 use errors::*;
 
+pub trait I2cCommand {
+    fn build(&self) -> CommandOptions;
+}
+
 #[derive(Debug)]
 pub enum Rate {
     Bps300 = 300,
@@ -32,10 +36,6 @@ pub enum ConductivityCommand {
     CalibrationHigh(f64),
     CalibrationClear,
     CalibrationState,
-    // `I2C` command.
-    DeviceAddress(u8),
-    // `I` command
-    DeviceInformation,
     // `Export`/`Import` command
     Export,
     ExportInfo,
@@ -44,6 +44,10 @@ pub enum ConductivityCommand {
     Factory,
     // `Find` command
     Find,
+    // `I` command
+    DeviceInformation,
+    // `I2C` command.
+    DeviceAddress(u8),
     // `K` command
     ProbeTypePointOne,
     ProbeTypeOne,
@@ -78,13 +82,32 @@ pub enum ConductivityCommand {
     TemperatureCompensatedValue,
 }
 
+#[derive(Clone,Debug,Default,PartialEq,Eq)]
+pub struct CommandOptions {
+    pub command: String,
+    pub delay: Option<u64>,
+    pub response: Option<CommandResponse>,
+}
+
+#[derive(Clone,Debug,PartialEq,Eq)]
+pub enum CommandResponse {
+    Ack,
+    CalibrationState,
+}
+
+impl I2cCommand for ConductivityCommand {
+    fn build(&self) -> CommandOptions {
+        unimplemented!();
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use super::ConductivityCommand::*;
 
     #[test]
-    fn build_command_uart_300() {
+    fn build_command_baud_300() {
         let cmd = Baud(Rate::Bps300).build();
         assert_eq!(cmd.command, "Baud,300\0");
         assert_eq!(cmd.delay, None);
@@ -92,7 +115,7 @@ mod tests {
     }
 
     #[test]
-    fn build_command_uart_1200() {
+    fn build_command_baud_1200() {
         let cmd = Baud(Rate::Bps1200).build();
         assert_eq!(cmd.command, "Baud,1200\0");
         assert_eq!(cmd.delay, None);
@@ -100,7 +123,7 @@ mod tests {
     }
 
     #[test]
-    fn build_command_uart_2400() {
+    fn build_command_baud_2400() {
         let cmd = Baud(Rate::Bps2400).build();
         assert_eq!(cmd.command, "Baud,2400\0");
         assert_eq!(cmd.delay, None);
@@ -108,7 +131,7 @@ mod tests {
     }
 
     #[test]
-    fn build_command_uart_9600() {
+    fn build_command_baud_9600() {
         let cmd = Baud(Rate::Bps9600).build();
         assert_eq!(cmd.command, "Baud,9600\0");
         assert_eq!(cmd.delay, None);
@@ -116,7 +139,7 @@ mod tests {
     }
 
     #[test]
-    fn build_command_uart_19200() {
+    fn build_command_baud_19200() {
         let cmd = Baud(Rate::Bps19200).build();
         assert_eq!(cmd.command, "Baud,19200\0");
         assert_eq!(cmd.delay, None);
@@ -124,7 +147,7 @@ mod tests {
     }
 
     #[test]
-    fn build_command_uart_38400() {
+    fn build_command_baud_38400() {
         let cmd = Baud(Rate::Bps38400).build();
         assert_eq!(cmd.command, "Baud,38400\0");
         assert_eq!(cmd.delay, None);
@@ -132,7 +155,7 @@ mod tests {
     }
 
     #[test]
-    fn build_command_uart_57600() {
+    fn build_command_baud_57600() {
         let cmd = Baud(Rate::Bps57600).build();
         assert_eq!(cmd.command, "Baud,57600\0");
         assert_eq!(cmd.delay, None);
@@ -140,7 +163,7 @@ mod tests {
     }
 
     #[test]
-    fn build_command_uart_115200() {
+    fn build_command_baud_115200() {
         let cmd = Baud(Rate::Bps115200).build();
         assert_eq!(cmd.command, "Baud,115200\0");
         assert_eq!(cmd.delay, None);
@@ -155,6 +178,7 @@ mod tests {
         assert_eq!(cmd.response, Some(CommandResponse::Ack));
     }
 
+    #[test]
     fn build_command_calibration_single_point() {
         let cmd = CalibrationSinglePoint(84.).build();
         assert_eq!(cmd.command, "Cal,84\0");
@@ -162,6 +186,7 @@ mod tests {
         assert_eq!(cmd.response, Some(CommandResponse::Ack));
     }
 
+    #[test]
     fn build_command_calibration_high() {
         let cmd = CalibrationHigh(12800.).build();
         assert_eq!(cmd.command, "Cal,high,12800\0");
@@ -169,6 +194,7 @@ mod tests {
         assert_eq!(cmd.response, Some(CommandResponse::Ack));
     }
 
+    #[test]
     fn build_command_calibration_low() {
         let cmd = CalibrationLow(1413.).build();
         assert_eq!(cmd.command, "Cal,low,1413\0");
