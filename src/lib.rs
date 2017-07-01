@@ -269,4 +269,12 @@ mod tests {
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, Some(CommandResponse::DeviceInformation));
     }
+
+    #[test]
+    fn build_command_change_device_address() {
+        let cmd = DeviceAddress(88).build();
+        assert_eq!(cmd.command, "I2C,88\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, None);
+    }
 }
