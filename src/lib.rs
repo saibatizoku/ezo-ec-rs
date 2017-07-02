@@ -203,12 +203,42 @@ impl I2cCommand for ConductivityCommand {
                 };
                 opts.set_command(format!("Baud,{}\0", rate)).finish()
             }
-            CalibrationDry => unimplemented!(),
-            CalibrationSinglePoint(cal) => unimplemented!(),
-            CalibrationLow(cal) => unimplemented!(),
-            CalibrationHigh(cal) => unimplemented!(),
-            CalibrationClear => unimplemented!(),
-            CalibrationState => unimplemented!(),
+            CalibrationDry => {
+                opts.set_command("Cal,dry\0".to_string())
+                    .set_delay(800)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            CalibrationSinglePoint(cal) => {
+                opts.set_command(format!("Cal,{}\0", cal))
+                    .set_delay(800)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            CalibrationLow(cal) => {
+                opts.set_command(format!("Cal,low,{}\0", cal))
+                    .set_delay(800)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            },
+            CalibrationHigh(cal) => {
+                opts.set_command(format!("Cal,high,{}\0", cal))
+                    .set_delay(800)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            },
+            CalibrationClear => {
+                opts.set_command("Cal,clear\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            CalibrationState => {
+                opts.set_command("Cal,?\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::CalibrationState)
+                    .finish()
+            }
             Export => unimplemented!(),
             ExportInfo => unimplemented!(),
             Import(ref data) => unimplemented!(),
