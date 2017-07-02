@@ -66,7 +66,7 @@ pub enum ConductivityCommand {
     OutputEnableSalinity,
     OutputDisableSpecificGravity,
     OutputEnableSpecificGravity,
-    OutputStatus,
+    OutputState,
     // `Plock` command
     ProtocolLockEnable,
     ProtocolLockDisable,
@@ -96,6 +96,7 @@ pub enum CommandResponse {
     DeviceInformation,
     Export,
     ExportInfo,
+    OutputState,
 }
 
 impl I2cCommand for ConductivityCommand {
@@ -276,5 +277,77 @@ mod tests {
         assert_eq!(cmd.command, "I2C,88\0");
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, None);
+    }
+
+    #[test]
+    fn build_command_output_disable_conductivity() {
+        let cmd = OutputDisableConductivity.build();
+        assert_eq!(cmd.command, "O,EC,0\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_output_enable_conductivity() {
+        let cmd = OutputEnableConductivity.build();
+        assert_eq!(cmd.command, "O,EC,1\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_output_disable_tds() {
+        let cmd = OutputDisableTds.build();
+        assert_eq!(cmd.command, "O,TDS,0\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_output_enable_tds() {
+        let cmd = OutputDisableTds.build();
+        assert_eq!(cmd.command, "O,EC,1\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_output_disable_salinity() {
+        let cmd = OutputDisableSalinity.build();
+        assert_eq!(cmd.command, "O,S,0\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_output_enable_salinity() {
+        let cmd = OutputDisableSalinity.build();
+        assert_eq!(cmd.command, "O,S,1\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_output_disable_specific_gravity() {
+        let cmd = OutputDisableSpecificGravity.build();
+        assert_eq!(cmd.command, "O,S,0\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_output_enable_specific_gravity() {
+        let cmd = OutputEnableSpecificGravity.build();
+        assert_eq!(cmd.command, "O,S,1\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_output_state() {
+        let cmd = OutputState.build();
+        assert_eq!(cmd.command, "O,S,?\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::OutputState));
     }
 }
