@@ -100,6 +100,7 @@ pub enum CommandResponse {
     OutputState,
     ProtocolLockState,
     ProbeTypeState,
+    Reading,
 }
 
 impl I2cCommand for ConductivityCommand {
@@ -432,5 +433,13 @@ mod tests {
         assert_eq!(cmd.command, "Plock,?\0");
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, Some(CommandResponse::ProtocolLockState));
+    }
+
+    #[test]
+    fn build_command_reading() {
+        let cmd = Reading.build();
+        assert_eq!(cmd.command, "R\0");
+        assert_eq!(cmd.delay, Some(600));
+        assert_eq!(cmd.response, Some(CommandResponse::Reading));
     }
 }
