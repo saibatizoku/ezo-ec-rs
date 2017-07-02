@@ -316,15 +316,60 @@ impl I2cCommand for ConductivityCommand {
                     .set_response(CommandResponse::LedState)
                     .finish()
             }
-            OutputDisableConductivity => unimplemented!(),
-            OutputEnableConductivity => unimplemented!(),
-            OutputDisableTds => unimplemented!(),
-            OutputEnableTds => unimplemented!(),
-            OutputDisableSalinity => unimplemented!(),
-            OutputEnableSalinity => unimplemented!(),
-            OutputDisableSpecificGravity => unimplemented!(),
-            OutputEnableSpecificGravity => unimplemented!(),
-            OutputState => unimplemented!(),
+            OutputDisableConductivity => {
+                opts.set_command("O,EC,0\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            OutputEnableConductivity => {
+                opts.set_command("O,EC,1\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            OutputDisableTds => {
+                opts.set_command("O,TDS,0\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            OutputEnableTds => {
+                opts.set_command("O,TDS,1\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            OutputDisableSalinity => {
+                opts.set_command("O,S,0\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            OutputEnableSalinity => {
+                opts.set_command("O,S,1\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            OutputDisableSpecificGravity => {
+                opts.set_command("O,SG,0\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            OutputEnableSpecificGravity => {
+                opts.set_command("O,SG,1\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            OutputState => {
+                opts.set_command("O,?\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::OutputState)
+                    .finish()
+            }
             ProtocolLockEnable => unimplemented!(),
             ProtocolLockDisable => unimplemented!(),
             ProtocolLockState => unimplemented!(),
@@ -593,8 +638,8 @@ mod tests {
 
     #[test]
     fn build_command_output_enable_tds() {
-        let cmd = OutputDisableTds.build();
-        assert_eq!(cmd.command, "O,EC,1\0");
+        let cmd = OutputEnableTds.build();
+        assert_eq!(cmd.command, "O,TDS,1\0");
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, Some(CommandResponse::Ack));
     }
@@ -609,7 +654,7 @@ mod tests {
 
     #[test]
     fn build_command_output_enable_salinity() {
-        let cmd = OutputDisableSalinity.build();
+        let cmd = OutputEnableSalinity.build();
         assert_eq!(cmd.command, "O,S,1\0");
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, Some(CommandResponse::Ack));
@@ -618,7 +663,7 @@ mod tests {
     #[test]
     fn build_command_output_disable_specific_gravity() {
         let cmd = OutputDisableSpecificGravity.build();
-        assert_eq!(cmd.command, "O,S,0\0");
+        assert_eq!(cmd.command, "O,SG,0\0");
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, Some(CommandResponse::Ack));
     }
@@ -626,7 +671,7 @@ mod tests {
     #[test]
     fn build_command_output_enable_specific_gravity() {
         let cmd = OutputEnableSpecificGravity.build();
-        assert_eq!(cmd.command, "O,S,1\0");
+        assert_eq!(cmd.command, "O,SG,1\0");
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, Some(CommandResponse::Ack));
     }
@@ -634,7 +679,7 @@ mod tests {
     #[test]
     fn build_command_output_state() {
         let cmd = OutputState.build();
-        assert_eq!(cmd.command, "O,S,?\0");
+        assert_eq!(cmd.command, "O,?\0");
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, Some(CommandResponse::OutputState));
     }
