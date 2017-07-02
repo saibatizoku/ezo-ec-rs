@@ -52,7 +52,7 @@ pub enum ConductivityCommand {
     ProbeTypePointOne,
     ProbeTypeOne,
     ProbeTypeTen,
-    ProbeTypeStatus,
+    ProbeTypeState,
     // `L` command
     LedOn,
     LedOff,
@@ -97,6 +97,7 @@ pub enum CommandResponse {
     Export,
     ExportInfo,
     OutputState,
+    ProbeTypeState,
 }
 
 impl I2cCommand for ConductivityCommand {
@@ -277,6 +278,38 @@ mod tests {
         assert_eq!(cmd.command, "I2C,88\0");
         assert_eq!(cmd.delay, Some(300));
         assert_eq!(cmd.response, None);
+    }
+
+    #[test]
+    fn build_command_probe_type_point_one() {
+        let cmd = ProbeTypePointOne.build();
+        assert_eq!(cmd.command, "K,0.1\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_probe_type_one() {
+        let cmd = ProbeTypeOne.build();
+        assert_eq!(cmd.command, "K,1.0\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_probe_type_ten() {
+        let cmd = ProbeTypeTen.build();
+        assert_eq!(cmd.command, "K,10.0\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_probe_type_state() {
+        let cmd = ProbeTypeState.build();
+        assert_eq!(cmd.command, "K,?\0");
+        assert_eq!(cmd.delay, Some(600));
+        assert_eq!(cmd.response, Some(CommandResponse::ProbeTypeState));
     }
 
     #[test]
