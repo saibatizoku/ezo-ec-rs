@@ -1,5 +1,5 @@
 #![recursion_limit = "1024"]
-//! An example that takes readings from the RTD EC chip in a loop.
+//! An example that takes readings from the EC EZO chip in a loop.
 //!
 extern crate ezo_ec;
 extern crate i2cdev;
@@ -19,7 +19,8 @@ fn run() -> Result<()> {
         .chain_err(|| "Could not open I2C device")?;
     loop {
         ConductivityCommand::Reading.build().run(&mut dev)?;
-        thread::sleep(Duration::from_millis(10000));
+        ConductivityCommand::Sleep.build().run(&mut dev)?;
+        thread::sleep(Duration::from_millis(9400));
     }
 }
 
