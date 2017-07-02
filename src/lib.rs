@@ -401,8 +401,18 @@ impl I2cCommand for ConductivityCommand {
                     .set_response(CommandResponse::Status)
                     .finish()
             }
-            TemperatureCompensation(temp) => unimplemented!(),
-            TemperatureCompensationValue => unimplemented!(),
+            TemperatureCompensation(temp) => {
+                opts.set_command(format!("T,{}\0", temp))
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            TemperatureCompensationValue => {
+                opts.set_command("T,?\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::CompensationValue)
+                    .finish()
+            }
         }
     }
 }
