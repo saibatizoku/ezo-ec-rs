@@ -239,11 +239,30 @@ impl I2cCommand for ConductivityCommand {
                     .set_response(CommandResponse::CalibrationState)
                     .finish()
             }
-            Export => unimplemented!(),
-            ExportInfo => unimplemented!(),
-            Import(ref data) => unimplemented!(),
-            Factory => unimplemented!(),
-            Find => unimplemented!(),
+            Export => {
+                opts.set_command("Export\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Export)
+                    .finish()
+            }
+            ExportInfo => {
+                opts.set_command("Export,?\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::ExportInfo)
+                    .finish()
+            }
+            Import(ref calib) => {
+                opts.set_command(format!("Import,{}\0", calib))
+                    .set_delay(300)
+                    .finish()
+            }
+            Factory => opts.set_command("Factory\0".to_string()).finish(),
+            Find => {
+                opts.set_command("F\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
             DeviceInformation => unimplemented!(),
             DeviceAddress(addr) => unimplemented!(),
             ProbeTypePointOne => unimplemented!(),
