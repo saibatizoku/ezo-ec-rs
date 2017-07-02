@@ -6,6 +6,7 @@
 extern crate error_chain;
 extern crate i2cdev;
 
+/// Use error-chain.
 pub mod errors { error_chain! {} }
 
 use errors::*;
@@ -14,7 +15,8 @@ use i2cdev::linux::LinuxI2CDevice;
 use std::thread;
 use std::time::Duration;
 
-pub const MAX_RESPONSE_LENGTH: usize = 399;
+/// Maximum ascii-character response size + 2
+pub const MAX_RESPONSE_LENGTH: usize = 401;
 
 /// Useful for properly building I2C parameters from a command.
 pub trait I2cCommand {
@@ -116,6 +118,7 @@ pub enum CommandResponse {
     Status,
 }
 
+/// Builds commands.
 pub trait CommandBuilder {
     fn finish(&self) -> CommandOptions;
     fn run(&self, dev: &mut LinuxI2CDevice) -> Result<()>;
