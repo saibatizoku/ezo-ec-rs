@@ -274,10 +274,30 @@ impl I2cCommand for ConductivityCommand {
                     .set_delay(300)
                     .finish()
             }
-            ProbeTypePointOne => unimplemented!(),
-            ProbeTypeOne => unimplemented!(),
-            ProbeTypeTen => unimplemented!(),
-            ProbeTypeState => unimplemented!(),
+            ProbeTypePointOne => {
+                opts.set_command("K,0.1\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            ProbeTypeOne => {
+                opts.set_command("K,1.0\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            ProbeTypeTen => {
+                opts.set_command("K,10.0\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            ProbeTypeState => {
+                opts.set_command("K,?\0".to_string())
+                    .set_delay(600)
+                    .set_response(CommandResponse::ProbeTypeState)
+                    .finish()
+            }
             LedOn => unimplemented!(),
             LedOff => unimplemented!(),
             LedState => unimplemented!(),
