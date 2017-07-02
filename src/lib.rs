@@ -10,12 +10,14 @@ mod errors { error_chain! {} }
 
 use errors::*;
 
+/// Useful for properly building I2C parameters from a command.
 pub trait I2cCommand {
     fn build(&self) -> CommandOptions;
 }
 
+/// Allowable baudrates used when changing the chip to UART mode.
 #[derive(Debug)]
-pub enum Rate {
+pub enum BpsRate {
     Bps300 = 300,
     Bps1200 = 1200,
     Bps2400 = 2400,
@@ -26,9 +28,10 @@ pub enum Rate {
     Bps115200 = 115200,
 }
 
+/// Commands for interacting with the EC EZO chip.
 pub enum ConductivityCommand {
     // `Baud` command
-    Baud(Rate),
+    Baud(BpsRate),
     // `Cal` command.
     CalibrationDry,
     CalibrationSinglePoint(f64),
@@ -82,6 +85,7 @@ pub enum ConductivityCommand {
     TemperatureCompensationValue,
 }
 
+/// Command-related parameters used to build I2C write/read interactions.
 #[derive(Clone,Debug,Default,PartialEq,Eq)]
 pub struct CommandOptions {
     pub command: String,
@@ -89,6 +93,7 @@ pub struct CommandOptions {
     pub response: Option<CommandResponse>,
 }
 
+/// Allowed responses from I2C read interactions.
 #[derive(Clone,Debug,PartialEq,Eq)]
 pub enum CommandResponse {
     Ack,
@@ -118,7 +123,7 @@ mod tests {
 
     #[test]
     fn build_command_baud_300() {
-        let cmd = Baud(Rate::Bps300).build();
+        let cmd = Baud(BpsRate::Bps300).build();
         assert_eq!(cmd.command, "Baud,300\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -126,7 +131,7 @@ mod tests {
 
     #[test]
     fn build_command_baud_1200() {
-        let cmd = Baud(Rate::Bps1200).build();
+        let cmd = Baud(BpsRate::Bps1200).build();
         assert_eq!(cmd.command, "Baud,1200\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -134,7 +139,7 @@ mod tests {
 
     #[test]
     fn build_command_baud_2400() {
-        let cmd = Baud(Rate::Bps2400).build();
+        let cmd = Baud(BpsRate::Bps2400).build();
         assert_eq!(cmd.command, "Baud,2400\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -142,7 +147,7 @@ mod tests {
 
     #[test]
     fn build_command_baud_9600() {
-        let cmd = Baud(Rate::Bps9600).build();
+        let cmd = Baud(BpsRate::Bps9600).build();
         assert_eq!(cmd.command, "Baud,9600\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -150,7 +155,7 @@ mod tests {
 
     #[test]
     fn build_command_baud_19200() {
-        let cmd = Baud(Rate::Bps19200).build();
+        let cmd = Baud(BpsRate::Bps19200).build();
         assert_eq!(cmd.command, "Baud,19200\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -158,7 +163,7 @@ mod tests {
 
     #[test]
     fn build_command_baud_38400() {
-        let cmd = Baud(Rate::Bps38400).build();
+        let cmd = Baud(BpsRate::Bps38400).build();
         assert_eq!(cmd.command, "Baud,38400\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -166,7 +171,7 @@ mod tests {
 
     #[test]
     fn build_command_baud_57600() {
-        let cmd = Baud(Rate::Bps57600).build();
+        let cmd = Baud(BpsRate::Bps57600).build();
         assert_eq!(cmd.command, "Baud,57600\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
@@ -174,7 +179,7 @@ mod tests {
 
     #[test]
     fn build_command_baud_115200() {
-        let cmd = Baud(Rate::Bps115200).build();
+        let cmd = Baud(BpsRate::Bps115200).build();
         assert_eq!(cmd.command, "Baud,115200\0");
         assert_eq!(cmd.delay, None);
         assert_eq!(cmd.response, None);
