@@ -187,7 +187,24 @@ impl CommandBuilder for CommandOptions {
 
 impl I2cCommand for ConductivityCommand {
     fn build(&self) -> CommandOptions {
-        unimplemented!();
+        use self::ConductivityCommand::*;
+        let mut opts = CommandOptions::default();
+        match *self {
+            Baud(ref baud) => {
+                let rate = match *baud {
+                    BpsRate::Bps300 => BpsRate::Bps300 as u32,
+                    BpsRate::Bps1200 => BpsRate::Bps1200 as u32,
+                    BpsRate::Bps2400 => BpsRate::Bps2400 as u32,
+                    BpsRate::Bps9600 => BpsRate::Bps9600 as u32,
+                    BpsRate::Bps19200 => BpsRate::Bps19200 as u32,
+                    BpsRate::Bps38400 => BpsRate::Bps38400 as u32,
+                    BpsRate::Bps57600 => BpsRate::Bps57600 as u32,
+                    BpsRate::Bps115200 => BpsRate::Bps115200 as u32,
+                };
+                opts.set_command(format!("Baud,{}\0", rate)).finish()
+            }
+            _ => unimplemented!(),
+        }
     }
 }
 
