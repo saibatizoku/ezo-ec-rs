@@ -96,6 +96,7 @@ pub enum CommandResponse {
     DeviceInformation,
     Export,
     ExportInfo,
+    LedState,
     OutputState,
     ProbeTypeState,
 }
@@ -310,6 +311,30 @@ mod tests {
         assert_eq!(cmd.command, "K,?\0");
         assert_eq!(cmd.delay, Some(600));
         assert_eq!(cmd.response, Some(CommandResponse::ProbeTypeState));
+    }
+
+    #[test]
+    fn build_command_led_on() {
+        let cmd = LedOn.build();
+        assert_eq!(cmd.command, "L,1\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_led_off() {
+        let cmd = LedOff.build();
+        assert_eq!(cmd.command, "L,0\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::Ack));
+    }
+
+    #[test]
+    fn build_command_led_state() {
+        let cmd = LedState.build();
+        assert_eq!(cmd.command, "L,?\0");
+        assert_eq!(cmd.delay, Some(300));
+        assert_eq!(cmd.response, Some(CommandResponse::LedState));
     }
 
     #[test]
