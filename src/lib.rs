@@ -6,7 +6,7 @@
 extern crate error_chain;
 extern crate i2cdev;
 
-mod errors { error_chain! {} }
+pub mod errors { error_chain! {} }
 
 use errors::*;
 use i2cdev::core::I2CDevice;

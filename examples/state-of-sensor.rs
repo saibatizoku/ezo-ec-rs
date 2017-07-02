@@ -4,8 +4,8 @@
 extern crate ezo_ec;
 extern crate i2cdev;
 
-use ezo_rtd::errors::*;
-use ezo_rtd::{CommandBuilder, I2cCommand, TemperatureCommand};
+use ezo_ec::errors::*;
+use ezo_ec::{CommandBuilder, I2cCommand, ConductivityCommand};
 use i2cdev::linux::LinuxI2CDevice;
 
 const I2C_BUS_ID: u8 = 1;
@@ -15,12 +15,12 @@ fn run() -> Result<()> {
     let device_path = format!("/dev/i2c-{}", I2C_BUS_ID);
     let mut dev = LinuxI2CDevice::new(&device_path, EZO_SENSOR_ADDR)
         .chain_err(|| "Could not open I2C device")?;
-    TemperatureCommand::Status.build().run(&mut dev)?;
-    TemperatureCommand::CalibrationState.build().run(&mut dev)?;
-    TemperatureCommand::OutputState.build().run(&mut dev)?;
-    TemperatureCommand::LedState.build().run(&mut dev)?;
-    TemperatureCommand::ExportInfo.build().run(&mut dev)?;
-    TemperatureCommand::Sleep.build().run(&mut dev)?;
+    ConductivityCommand::Status.build().run(&mut dev)?;
+    ConductivityCommand::CalibrationState.build().run(&mut dev)?;
+    ConductivityCommand::OutputState.build().run(&mut dev)?;
+    ConductivityCommand::LedState.build().run(&mut dev)?;
+    ConductivityCommand::ExportInfo.build().run(&mut dev)?;
+    ConductivityCommand::Sleep.build().run(&mut dev)?;
     Ok(())
 }
 
