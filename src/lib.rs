@@ -388,7 +388,12 @@ impl I2cCommand for ConductivityCommand {
                     .set_response(CommandResponse::ProtocolLockState)
                     .finish()
             }
-            Reading => unimplemented!(),
+            Reading => {
+                opts.set_command("R\0".to_string())
+                    .set_delay(600)
+                    .set_response(CommandResponse::Reading)
+                    .finish()
+            }
             Sleep => unimplemented!(),
             Status => unimplemented!(),
             TemperatureCompensation(temp) => unimplemented!(),
