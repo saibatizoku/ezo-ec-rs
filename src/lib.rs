@@ -298,9 +298,24 @@ impl I2cCommand for ConductivityCommand {
                     .set_response(CommandResponse::ProbeTypeState)
                     .finish()
             }
-            LedOn => unimplemented!(),
-            LedOff => unimplemented!(),
-            LedState => unimplemented!(),
+            LedOn => {
+                opts.set_command("L,1\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            LedOff => {
+                opts.set_command("L,0\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::Ack)
+                    .finish()
+            }
+            LedState => {
+                opts.set_command("L,?\0".to_string())
+                    .set_delay(300)
+                    .set_response(CommandResponse::LedState)
+                    .finish()
+            }
             OutputDisableConductivity => unimplemented!(),
             OutputEnableConductivity => unimplemented!(),
             OutputDisableTds => unimplemented!(),
