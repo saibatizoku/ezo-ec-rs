@@ -8,10 +8,12 @@ extern crate ezo_common;
 extern crate i2cdev;
 
 /// Use error-chain.
-pub mod errors { error_chain! {} }
+pub mod errors {
+    error_chain!{}
+}
 
 use errors::*;
-use ezo_common::{BpsRate};
+use ezo_common::BpsRate;
 use i2cdev::core::I2CDevice;
 use i2cdev::linux::LinuxI2CDevice;
 use std::thread;
@@ -212,13 +214,13 @@ impl I2cCommand for ConductivityCommand {
                     .set_delay(800)
                     .set_response(CommandResponse::Ack)
                     .finish()
-            },
+            }
             CalibrationHigh(cal) => {
                 opts.set_command(format!("Cal,high,{}\0", cal))
                     .set_delay(800)
                     .set_response(CommandResponse::Ack)
                     .finish()
-            },
+            }
             CalibrationClear => {
                 opts.set_command("Cal,clear\0".to_string())
                     .set_delay(300)
