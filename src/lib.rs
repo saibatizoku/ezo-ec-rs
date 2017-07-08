@@ -4,12 +4,14 @@
 #![recursion_limit = "1024"]
 #[macro_use]
 extern crate error_chain;
+extern crate ezo_common;
 extern crate i2cdev;
 
 /// Use error-chain.
 pub mod errors { error_chain! {} }
 
 use errors::*;
+use ezo_common::{BpsRate};
 use i2cdev::core::I2CDevice;
 use i2cdev::linux::LinuxI2CDevice;
 use std::thread;
@@ -21,19 +23,6 @@ pub const MAX_RESPONSE_LENGTH: usize = 401;
 /// Useful for properly building I2C parameters from a command.
 pub trait I2cCommand {
     fn build(&self) -> CommandOptions;
-}
-
-/// Allowable baudrates used when changing the chip to UART mode.
-#[derive(Debug)]
-pub enum BpsRate {
-    Bps300 = 300,
-    Bps1200 = 1200,
-    Bps2400 = 2400,
-    Bps9600 = 9600,
-    Bps19200 = 19200,
-    Bps38400 = 38400,
-    Bps57600 = 57600,
-    Bps115200 = 115200,
 }
 
 /// Commands for interacting with the EC EZO chip.
