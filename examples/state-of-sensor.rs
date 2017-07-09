@@ -15,12 +15,21 @@ fn run() -> Result<()> {
     let device_path = format!("/dev/i2c-{}", I2C_BUS_ID);
     let mut dev = LinuxI2CDevice::new(&device_path, EZO_SENSOR_ADDR)
         .chain_err(|| "Could not open I2C device")?;
-    ConductivityCommand::Status.build().run(&mut dev)?;
-    ConductivityCommand::CalibrationState.build().run(&mut dev)?;
-    ConductivityCommand::OutputState.build().run(&mut dev)?;
-    ConductivityCommand::LedState.build().run(&mut dev)?;
-    ConductivityCommand::ExportInfo.build().run(&mut dev)?;
-    ConductivityCommand::Sleep.build().run(&mut dev)?;
+    let mut response = String::new();
+    let commands = [ConductivityCommand::Status,
+                    ConductivityCommand::CalibrationState,
+                    ConductivityCommand::OutputState,
+                    ConductivityCommand::LedState,
+                    ConductivityCommand::ExportInfo,
+                    ConductivityCommand::Sleep];
+    for cmd in commands.iter() {
+        let mut builder = cmd.build();
+        builder.run(&mut dev)?;
+        response += &builder.parse_response()?;
+        response += &"\n";
+    }
+    println!("responses:");
+    println!("{}", response);
     Ok(())
 }
 

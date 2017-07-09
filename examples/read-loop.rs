@@ -1,9 +1,11 @@
 #![recursion_limit = "1024"]
 //! An example that takes readings from the EC EZO chip in a loop.
 //!
+extern crate chrono;
 extern crate ezo_ec;
 extern crate i2cdev;
 
+use chrono::{DateTime, Utc};
 use ezo_ec::errors::*;
 use ezo_ec::{CommandBuilder, I2cCommand, ConductivityCommand};
 use i2cdev::linux::LinuxI2CDevice;
@@ -18,8 +20,15 @@ fn run() -> Result<()> {
     let mut dev = LinuxI2CDevice::new(&device_path, EZO_SENSOR_ADDR)
         .chain_err(|| "Could not open I2C device")?;
     loop {
-        ConductivityCommand::Reading.build().run(&mut dev)?;
+        let mut builder = ConductivityCommand::Reading.build();
+        builder.run(&mut dev)?;
+        let ec = builder.parse_response()?;
         ConductivityCommand::Sleep.build().run(&mut dev)?;
+        let dt: DateTime<Utc> = Utc::now();
+        println!("{:?},{:.*},°C",
+                 dt,
+                 2,
+                 ec.parse::<f64>().chain_err(|| "unparsable conductivity")?);
         thread::sleep(Duration::from_millis(9400));
     }
 }
