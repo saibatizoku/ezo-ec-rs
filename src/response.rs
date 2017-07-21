@@ -442,6 +442,148 @@ mod tests {
     }
 
     #[test]
+    fn parses_output_string_status() {
+
+        let response = "?O,EC";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::On,
+                       total_dissolved_solids: ParameterStatus::Off,
+                       salinity: ParameterStatus::Off,
+                       specific_gravity: ParameterStatus::Off,
+                   });
+
+        let response = "?O,EC,TDS,S,SG";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::On,
+                       total_dissolved_solids: ParameterStatus::On,
+                       salinity: ParameterStatus::On,
+                       specific_gravity: ParameterStatus::On,
+                   });
+
+        let response = "?O,EC,TDS,S";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::On,
+                       total_dissolved_solids: ParameterStatus::On,
+                       salinity: ParameterStatus::On,
+                       specific_gravity: ParameterStatus::Off,
+                   });
+
+        let response = "?O,EC,TDS";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::On,
+                       total_dissolved_solids: ParameterStatus::On,
+                       salinity: ParameterStatus::Off,
+                       specific_gravity: ParameterStatus::Off,
+                   });
+
+        let response = "?O,TDS,S,SG";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::Off,
+                       total_dissolved_solids: ParameterStatus::On,
+                       salinity: ParameterStatus::On,
+                       specific_gravity: ParameterStatus::On,
+                   });
+
+        let response = "?O,TDS,S";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::Off,
+                       total_dissolved_solids: ParameterStatus::On,
+                       salinity: ParameterStatus::On,
+                       specific_gravity: ParameterStatus::Off,
+                   });
+
+        let response = "?O,TDS";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::Off,
+                       total_dissolved_solids: ParameterStatus::On,
+                       salinity: ParameterStatus::Off,
+                       specific_gravity: ParameterStatus::Off,
+                   });
+
+        let response = "?O,S,SG";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::Off,
+                       total_dissolved_solids: ParameterStatus::Off,
+                       salinity: ParameterStatus::On,
+                       specific_gravity: ParameterStatus::On,
+                   });
+
+        let response = "?O,S";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::Off,
+                       total_dissolved_solids: ParameterStatus::Off,
+                       salinity: ParameterStatus::On,
+                       specific_gravity: ParameterStatus::Off,
+                   });
+
+        let response = "?O,SG";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::Off,
+                       total_dissolved_solids: ParameterStatus::Off,
+                       salinity: ParameterStatus::Off,
+                       specific_gravity: ParameterStatus::On,
+                   });
+
+        let response = "?O,No output";
+        assert_eq!(OutputStringStatus::parse(response).unwrap(),
+                   OutputStringStatus {
+                       electric_conductivity: ParameterStatus::Off,
+                       total_dissolved_solids: ParameterStatus::Off,
+                       salinity: ParameterStatus::Off,
+                       specific_gravity: ParameterStatus::Off,
+                   });
+    }
+
+    #[test]
+    fn parsing_invalid_output_string_status_yields_error() {
+        let response = "?O,";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,,";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,,,";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,,,,";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,a,b,c,d";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,ECB";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,EC,TDS,";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,EC,S,TDS";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,EC,,TDS";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,EC,TDS,S,SG,";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,EC,TDS,S,SG,X";
+        assert!(OutputStringStatus::parse(response).is_err());
+
+        let response = "?O,SG,S,TDS,EC";
+        assert!(OutputStringStatus::parse(response).is_err());
+    }
+
+    #[test]
     fn parses_sensor_reading_four_parameters() {
         let response = "0,0,0,0";
         assert_eq!(ProbeReading::parse(response).unwrap(),
