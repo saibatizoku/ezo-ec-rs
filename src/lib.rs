@@ -7,15 +7,8 @@ extern crate error_chain;
 extern crate ezo_common;
 extern crate i2cdev;
 
-/// Use error-chain.
-pub mod errors {
-    use ezo_common;
-    error_chain!{
-        links {
-            Ezo(ezo_common::errors::Error, ezo_common::errors::ErrorKind);
-        }
-    }
-}
+// Use error-chain.
+pub mod errors;
 
 use errors::*;
 use ezo_common::{BpsRate, ResponseCode, parse_data_ascii_bytes, response_code, write_to_ezo,
