@@ -11,11 +11,11 @@ use response::{
     DeviceStatus,
     Exported,
     ExportedInfo,
-    ProbeTypeStatus,
+    ProbeType,
     LedStatus,
-    OutputStatus,
+    OutputStringStatus,
     ProtocolLockStatus,
-    SensorReading,
+    ProbeReading,
 };
 
 use ezo_common::{
@@ -149,7 +149,7 @@ define_command! {
 define_command! {
     doc: "`K,?` command.",
     ProbeTypeState, { "K,?\0".to_string() }, 300,
-    resp: ProbeTypeStatus, { ProbeTypeStatus::parse(&resp) }
+    resp: ProbeType, { ProbeType::parse(&resp) }
 }
 
 define_command! {
@@ -169,9 +169,9 @@ define_command! {
 }
 
 define_command! {
-    doc: "`R` command. Returns a `SensorReading` response.",
+    doc: "`R` command. Returns a `ProbeReading` response.",
     Reading, { "R\0".to_string() }, 600,
-    resp: SensorReading, { SensorReading::parse(&resp) }
+    resp: ProbeReading, { ProbeReading::parse(&resp) }
 }
 
 define_command! {
@@ -217,7 +217,7 @@ define_command! {
 define_command! {
     doc: "`O,?` command.",
     OutputState, { "O,?\0".to_string() }, 300,
-    resp: OutputStatus, { OutputStatus::parse(&resp) }
+    resp: OutputStringStatus, { OutputStringStatus::parse(&resp) }
 }
 
 define_command! {
