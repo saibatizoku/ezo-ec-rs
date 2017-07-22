@@ -1,77 +1,398 @@
+//! Parses I2C responses from the EC EZO Chip.
+//!
+//! Code modified from "Federico Mena Quintero <federico@gnome.org>"'s original.
+
+use std::str::FromStr;
+
 use errors::*;
 
-pub struct CalibrationStatus;
+
+/// Calibration status of the EC EZO chip.
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum CalibrationStatus {
+    OnePoint,
+    TwoPoint,
+    NotCalibrated,
+}
 
 impl CalibrationStatus {
+    /// Parses the result of the "Cal,?" command to query the device's
+    /// calibration status.  Returns ...
     pub fn parse(response: &str) -> Result<CalibrationStatus> {
-        unimplemented!();
+        if response.starts_with("?CAL,") {
+            let rest = response.get(5..).unwrap();
+            let mut split = rest.split(',');
+
+            let _calibration = match split.next() {
+                Some("2") => Ok(CalibrationStatus::TwoPoint),
+                Some("1") => Ok(CalibrationStatus::OnePoint),
+                Some("0") => Ok(CalibrationStatus::NotCalibrated),
+                _ => return Err(ErrorKind::ResponseParse.into()),
+            };
+
+            match split.next() {
+                None => _calibration,
+                _ => Err(ErrorKind::ResponseParse.into()),
+            }
+        } else {
+            Err(ErrorKind::ResponseParse.into())
+        }
     }
 }
 
-pub struct CompensationValue;
+/// Current temperature value used for pH compensation.
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct CompensationValue(pub f64);
 
 impl CompensationValue {
+    /// Parses the result of the "T,?" command to get the device's
+    /// temperature compensation value.
     pub fn parse(response: &str) -> Result<CompensationValue> {
-        unimplemented!();
+        if response.starts_with("?T,") {
+            let rest = response.get(3..).unwrap();
+            let val = f64::from_str(rest).chain_err(|| ErrorKind::ResponseParse)?;
+            Ok ( CompensationValue(val) )
+        } else {
+            Err(ErrorKind::ResponseParse.into())
+        }
     }
 }
-pub struct DeviceInfo;
+
+/// Current firmware settings of the RTD EZO chip.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DeviceInfo {
+    pub device: String,
+    pub firmware: String,
+}
 
 impl DeviceInfo {
     pub fn parse(response: &str) -> Result<DeviceInfo> {
-        unimplemented!();
+        if response.starts_with("?I,") {
+            let rest = response.get(3..).unwrap();
+            let mut split = rest.split(',');
+
+            let device = if let Some(device_str) = split.next() {
+                device_str.to_string()
+            } else {
+                return Err(ErrorKind::ResponseParse.into());
+            };
+
+            let firmware = if let Some(firmware_str) = split.next() {
+                firmware_str.to_string()
+            } else {
+                return Err(ErrorKind::ResponseParse.into());
+            };
+
+            if let Some(_) = split.next() {
+                return Err(ErrorKind::ResponseParse.into());
+            }
+
+            Ok (DeviceInfo { device, firmware } )
+
+        } else {
+            Err(ErrorKind::ResponseParse.into())
+        }
     }
 }
-pub struct DeviceStatus;
+
+/// Reason for which the device restarted, data sheet pp. 58
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum RestartReason {
+    PoweredOff,
+    SoftwareReset,
+    BrownOut,
+    Watchdog,
+    Unknown,
+}
+
+/// Response from the "Status" command to get the device status
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct DeviceStatus {
+    pub restart_reason: RestartReason,
+    pub vcc_voltage: f64,
+}
 
 impl DeviceStatus {
+    /// Parses the result of the "Status" command to get the device's status.
     pub fn parse(response: &str) -> Result<DeviceStatus> {
-        unimplemented!();
+        if response.starts_with("?STATUS,") {
+            let rest = response.get(8..).unwrap();
+            let mut split = rest.split(',');
+
+            let restart_reason = match split.next() {
+                Some("P") => RestartReason::PoweredOff,
+                Some("S") => RestartReason::SoftwareReset,
+                Some("B") => RestartReason::BrownOut,
+                Some("W") => RestartReason::Watchdog,
+                Some("U") => RestartReason::Unknown,
+                _ => return Err(ErrorKind::ResponseParse.into()),
+            };
+
+            let voltage = if let Some(voltage_str) = split.next() {
+                f64::from_str(voltage_str)
+                    .chain_err(|| ErrorKind::ResponseParse)?
+            } else {
+                return Err(ErrorKind::ResponseParse.into());
+            };
+
+            if let Some(_) = split.next() {
+                return Err(ErrorKind::ResponseParse.into());
+            }
+
+            Ok(DeviceStatus {
+                   restart_reason: restart_reason,
+                   vcc_voltage: voltage,
+               })
+        } else {
+            Err(ErrorKind::ResponseParse.into())
+        }
     }
 }
-pub struct Exported;
+
+/// Exported calibration string of the EC EZO chip.
+#[derive(Debug, Clone, PartialEq)]
+pub enum Exported {
+    ExportString(String),
+    Done,
+}
 
 impl Exported {
     pub fn parse(response: &str) -> Result<Exported> {
-        unimplemented!();
+        if response.starts_with("*") {
+            match response {
+                "*DONE" => Ok(Exported::Done),
+                _ => Err(ErrorKind::ResponseParse.into()),
+            }
+        } else {
+            match response.len() {
+                1..13 => Ok(Exported::ExportString(response.to_string())),
+                _ => Err(ErrorKind::ResponseParse.into()),
+            }
+        }
     }
 }
-pub struct ExportedInfo;
+
+/// Export the current calibration settings of the EC EZO chip.
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct ExportedInfo {
+    pub lines: u16,
+    pub total_bytes: u16,
+}
 
 impl ExportedInfo {
     pub fn parse(response: &str) -> Result<ExportedInfo> {
-        unimplemented!();
-    }
-}
-pub struct ProbeTypeStatus;
+        if response.starts_with("?EXPORT,") {
+            let num_str = response.get(8..).unwrap();
 
-impl ProbeTypeStatus {
-    pub fn parse(response: &str) -> Result<ProbeTypeStatus> {
-        unimplemented!();
-    }
-}
-pub struct LedStatus;
+            let mut split = num_str.split(",");
 
-impl LedStatus {
-    pub fn parse(response: &str) -> Result<LedStatus> {
-        unimplemented!();
-    }
-}
-pub struct OutputStatus;
+            let lines = if let Some(lines_str) = split.next() {
+                u16::from_str(lines_str)
+                    .chain_err(|| ErrorKind::ResponseParse)?
+            } else {
+                return Err(ErrorKind::ResponseParse.into());
+            };
 
-impl OutputStatus {
-    pub fn parse(response: &str) -> Result<OutputStatus> {
-        unimplemented!();
+            let total_bytes = if let Some(totalbytes_str) = split.next() {
+                u16::from_str(totalbytes_str)
+                    .chain_err(|| ErrorKind::ResponseParse)?
+            } else {
+                return Err(ErrorKind::ResponseParse.into());
+            };
+
+            if let Some(_) = split.next() {
+                return Err(ErrorKind::ResponseParse.into());
+            }
+
+            Ok (ExportedInfo { lines, total_bytes } )
+        } else {
+            Err(ErrorKind::ResponseParse.into())
+        }
     }
 }
-pub struct ProtocolLockStatus;
+
+/// Status of I2C protocol lock.
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum ProtocolLockStatus {
+    Off,
+    On,
+}
 
 impl ProtocolLockStatus {
     pub fn parse(response: &str) -> Result<ProtocolLockStatus> {
-        unimplemented!();
+        if response.starts_with("?PLOCK,") {
+            let rest = response.get(7..).unwrap();
+            let mut split = rest.split(',');
+
+            let _plock_status = match split.next() {
+                Some("1") => Ok(ProtocolLockStatus::On),
+                Some("0") => Ok(ProtocolLockStatus::Off),
+                _ => return Err(ErrorKind::ResponseParse.into()),
+            };
+
+            match split.next() {
+                None => _plock_status,
+                _ => Err(ErrorKind::ResponseParse.into()),
+            }
+        } else {
+            Err(ErrorKind::ResponseParse.into())
+        }
     }
 }
-pub struct SensorReading;
+
+/// Status of RTD EZO's LED.
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum LedStatus {
+    Off,
+    On,
+}
+
+impl LedStatus {
+    pub fn parse(response: &str) -> Result<LedStatus> {
+        if response.starts_with("?L,") {
+            let rest = response.get(3..).unwrap();
+
+            match rest {
+                "1" => Ok(LedStatus::On),
+                "0" => Ok(LedStatus::Off),
+                _ => return Err(ErrorKind::ResponseParse.into()),
+            }
+        } else {
+            Err(ErrorKind::ResponseParse.into())
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum ProbeType {
+    PointOne,
+    One,
+    Ten,
+}
+
+impl ProbeType {
+    /// Parses the result of the "Cal,?" command to query the device's
+    /// calibration status.  Returns ...
+    pub fn parse(response: &str) -> Result<ProbeType> {
+        if response.starts_with("?K,") {
+            let rest = response.get(3..).unwrap();
+            let mut split = rest.split(',');
+
+            let _calibration = match split.next() {
+                Some("0.1") => Ok(ProbeType::PointOne),
+                Some("1.0") => Ok(ProbeType::One),
+                Some("10.0") => Ok(ProbeType::Ten),
+                _ => return Err(ErrorKind::ResponseParse.into()),
+            };
+
+            match split.next() {
+                None => _calibration,
+                _ => Err(ErrorKind::ResponseParse.into()),
+            }
+        } else {
+            Err(ErrorKind::ResponseParse.into())
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum ParameterStatus {
+    On,
+    Off,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct OutputStringStatus {
+    pub electric_conductivity: ParameterStatus,
+    pub total_dissolved_solids: ParameterStatus,
+    pub salinity: ParameterStatus,
+    pub specific_gravity: ParameterStatus,
+}
+
+impl OutputStringStatus {
+    pub fn new() -> OutputStringStatus {
+        OutputStringStatus {
+            electric_conductivity: ParameterStatus::Off,
+            total_dissolved_solids: ParameterStatus::Off,
+            salinity: ParameterStatus::Off,
+            specific_gravity: ParameterStatus::Off,
+        }
+    }
+
+    pub fn parse(response: &str) -> Result<OutputStringStatus> {
+        println!("Matching: {}", response);
+        if response.starts_with("?O,") {
+            let rest = response.get(3..).unwrap();
+            let mut split = rest.split(',');
+
+            let mut _output = OutputStringStatus::new();
+
+            let _first = match split.next() {
+                Some("EC") => _output.electric_conductivity = ParameterStatus::On,
+
+                Some("TDS") => _output.total_dissolved_solids = ParameterStatus::On,
+
+                Some("S") => _output.salinity =  ParameterStatus::On,
+
+                Some("SG") => _output.specific_gravity = ParameterStatus::On,
+
+                Some("No output") | None => (),
+
+                _ => return Err(ErrorKind::ResponseParse.into()),
+            };
+            println!("\tmatched First Param: {:?}", &_output);
+
+            let _second = match split.next() {
+                Some("TDS") => _output.total_dissolved_solids = ParameterStatus::On,
+
+                Some("S") => _output.salinity =  ParameterStatus::On,
+
+                Some("SG") => _output.specific_gravity = ParameterStatus::On,
+
+                None => (),
+
+                _ => return Err(ErrorKind::ResponseParse.into()),
+            };
+            println!("\tmatched Second Param: {:?}", &_output);
+
+            let _third = match split.next() {
+                Some("S") => _output.salinity =  ParameterStatus::On,
+
+                Some("SG") => _output.specific_gravity = ParameterStatus::On,
+
+                None => (),
+
+                _ => return Err(ErrorKind::ResponseParse.into()),
+            };
+            println!("\tmatched Third Param: {:?}", &_output);
+
+            let _fourth = match split.next() {
+                Some("SG") => _output.specific_gravity = ParameterStatus::On,
+
+                None => (),
+
+                _ => return Err(ErrorKind::ResponseParse.into()),
+            };
+            println!("\tmatched Fourth Param: {:?}", &_output);
+
+            if let Some(_) = split.next() {
+                return Err(ErrorKind::ResponseParse.into());
+            };
+
+            Ok( _output )
+        } else {
+            Err(ErrorKind::ResponseParse.into())
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum ProbeMetric {
+    ElectricConductivity(f64),
+    TotalDissolvedSolids(f64),
+    Salinity(f64),
+    SpecificGravity(f64),
+}
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ProbeReading {
