@@ -379,6 +379,27 @@ impl OutputStringStatus {
             Err(ErrorKind::ResponseParse.into())
         }
     }
+
+    pub fn to_string(&self) -> String {
+        let mut _out: Vec<&str> = Vec::new();
+
+        if self.electric_conductivity == ParameterStatus::On {
+            _out.push("EC");
+        }
+        if self.total_dissolved_solids == ParameterStatus::On {
+            _out.push("TDS");
+        }
+        if self.salinity == ParameterStatus::On {
+            _out.push("S");
+        }
+        if self.specific_gravity == ParameterStatus::On {
+            _out.push("SG");
+        }
+        match _out.len() {
+            1...4 => _out.join(","),
+            0 | _ => "No output".to_string(),
+        }
+    }
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -759,7 +780,6 @@ mod tests {
 
     #[test]
     fn parses_output_string_status() {
-
         let response = "?O,EC";
         assert_eq!(OutputStringStatus::parse(response).unwrap(),
                    OutputStringStatus {
@@ -858,6 +878,53 @@ mod tests {
                        salinity: ParameterStatus::Off,
                        specific_gravity: ParameterStatus::Off,
                    });
+    }
+
+    #[test]
+    fn writes_output_string_status_as_string() {
+        let response = "?O,EC";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,EC,TDS,S,SG";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,EC,TDS,S";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,EC,TDS";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,TDS,S,SG";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,TDS,S";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,TDS";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,S,SG";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,S";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,SG";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
+
+        let response = "?O,No output";
+        let output_state = OutputStringStatus::parse(response).unwrap();
+        assert_eq!(output_state.to_string(), response.get(3..).unwrap());
     }
 
     #[test]
