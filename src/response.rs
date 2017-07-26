@@ -320,7 +320,6 @@ impl OutputStringStatus {
     }
 
     pub fn parse(response: &str) -> Result<OutputStringStatus> {
-        println!("Matching: {}", response);
         if response.starts_with("?O,") {
             let rest = response.get(3..).unwrap();
             let mut split = rest.split(',');
@@ -340,7 +339,6 @@ impl OutputStringStatus {
 
                 _ => return Err(ErrorKind::ResponseParse.into()),
             };
-            println!("\tmatched First Param: {:?}", &_output);
 
             let _second = match split.next() {
                 Some("TDS") => _output.total_dissolved_solids = ParameterStatus::On,
@@ -353,7 +351,6 @@ impl OutputStringStatus {
 
                 _ => return Err(ErrorKind::ResponseParse.into()),
             };
-            println!("\tmatched Second Param: {:?}", &_output);
 
             let _third = match split.next() {
                 Some("S") => _output.salinity =  ParameterStatus::On,
@@ -364,7 +361,6 @@ impl OutputStringStatus {
 
                 _ => return Err(ErrorKind::ResponseParse.into()),
             };
-            println!("\tmatched Third Param: {:?}", &_output);
 
             let _fourth = match split.next() {
                 Some("SG") => _output.specific_gravity = ParameterStatus::On,
@@ -373,7 +369,6 @@ impl OutputStringStatus {
 
                 _ => return Err(ErrorKind::ResponseParse.into()),
             };
-            println!("\tmatched Fourth Param: {:?}", &_output);
 
             if let Some(_) = split.next() {
                 return Err(ErrorKind::ResponseParse.into());
