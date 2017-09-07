@@ -42,17 +42,17 @@ pub trait Command {
 }
 
 define_command! {
-    doc: "'Baud,n' command, where 'n' is a variant belonging to 'BpsRate'.",
+    doc: "`Baud,n` command, where `n` is a variant belonging to `BpsRate`.",
     cmd: Baud(BpsRate), { format!("Baud,{}", cmd.parse()) }, 0
 }
 
 define_command! {
-    doc: "'Cal,dry' command, where 'n' is a variant belonging to 'BpsRate'.",
+    doc: "`Cal,dry` command.",
     CalibrationDry, { "Cal,dry".to_string() }, 800, Ack
 }
 
 define_command! {
-    doc: "'Cal,n' command, where 'n' is a 'f64' number.",
+    doc: "`Cal,n` command, where `n` is a `f64` number.",
     cmd: CalibrationOnePoint(f64), { format!("Cal,{:.*}", 2, cmd) }, 800, Ack
 }
 
