@@ -105,7 +105,7 @@ define_command! {
 }
 
 define_command! {
-    doc: "`I2C,n` command, where `n` is of type `u64`.",
+    doc: "`I2C,n` command, where `n` is of type `u16`.",
     cmd: DeviceAddress(u16), { format!("I2C,{}", cmd) }, 300
 }
 
