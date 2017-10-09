@@ -1,7 +1,7 @@
 //! Parses I2C responses from the EC EZO Chip.
 //!
 //! Code modified from "Federico Mena Quintero <federico@gnome.org>"'s original.
-
+use std::fmt;
 use std::str::FromStr;
 
 use errors::*;
@@ -92,6 +92,12 @@ impl DeviceInfo {
         } else {
             Err(ErrorKind::ResponseParse.into())
         }
+    }
+}
+
+impl fmt::Display for DeviceInfo {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "?I,{},{}", self.device, self.firmware)
     }
 }
 
