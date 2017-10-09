@@ -461,6 +461,27 @@ impl ProbeReading {
     }
 }
 
+impl fmt::Display for ProbeReading {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            &ProbeReading::None => {
+                write!(f, "none")
+            }
+            &ProbeReading::OneParameter(a) => {
+                write!(f, "{}", a)
+            }
+            &ProbeReading::TwoParameters(a, b) => {
+                write!(f, "{},{}", a, b)
+            }
+            &ProbeReading::ThreeParameters(a, b, c) => {
+                write!(f, "{},{},{}", a, b, c)
+            }
+            &ProbeReading::FourParameters(a, b, c, d) => {
+                write!(f, "{},{},{},{}", a, b, c, d)
+            }
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
