@@ -42,49 +42,49 @@ pub trait Command {
 }
 
 define_command! {
-    doc: "`Baud,n` command, where `n` is a variant belonging to `BpsRate`.",
+    doc: "`Baud,n` command, where `n` is a variant belonging to `BpsRate`. Switch chip to UART mode.",
     cmd: Baud(BpsRate), { format!("Baud,{}", cmd.parse()) }, 0
 }
 
 define_command! {
-    doc: "`Cal,dry` command.",
+    doc: "`Cal,dry` command. Performs calibration.",
     CalibrationDry, { "Cal,dry".to_string() }, 800, Ack
 }
 
 define_command! {
-    doc: "`Cal,n` command, where `n` is a `f64` number.",
+    doc: "`Cal,n` command, where `n` is a `f64` number. Performs calibration.",
     cmd: CalibrationOnePoint(f64), { format!("Cal,{:.*}", 2, cmd) }, 800, Ack
 }
 
 define_command! {
-    doc: "`Cal,low,t` command, where `t` is of type `f64`.",
+    doc: "`Cal,low,t` command, where `t` is of type `f64`. Performs calibration.",
     cmd: CalibrationLow(f64), { format!("Cal,low,{:.*}", 2, cmd) }, 800, Ack
 }
 
 define_command! {
-    doc: "`Cal,high,t` command, where `t` is of type `f64`.",
+    doc: "`Cal,high,t` command, where `t` is of type `f64`. Performs calibration.",
     cmd: CalibrationHigh(f64), { format!("Cal,high,{:.*}", 2, cmd) }, 800, Ack
 }
 
 define_command! {
-    doc: "`Cal,clear` command.",
+    doc: "`Cal,clear` command. Clears current calibration.",
     CalibrationClear, { "Cal,clear".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`Cal,?` command. Returns a `CalibrationStatus` response.",
+    doc: "`Cal,?` command. Returns a `CalibrationStatus` response. Current calibration status.",
     CalibrationState, { "Cal,?".to_string() }, 300,
     resp: CalibrationStatus, { CalibrationStatus::parse(&resp) }
 }
 
 define_command! {
-    doc: "`Export` command.",
+    doc: "`Export` command. Returns an `Exported` response. Exports current calibration.",
     Export, { "Export".to_string() }, 300,
     resp: Exported, { Exported::parse(&resp) }
 }
 
 define_command! {
-    doc: "`ExportInfo` command.",
+    doc: "`ExportInfo` command. Returns an `ExportedInfo` response. Calibration string info.",
     ExportInfo, { "Export,?".to_string() }, 300,
     resp: ExportedInfo, { ExportedInfo::parse(&resp) }
 }
@@ -95,149 +95,149 @@ define_command! {
 }
 
 define_command! {
-    doc: "`Factory` command.",
+    doc: "`Factory` command. Enable factory reset.",
     Factory, { "Factory".to_string() }, 0
 }
 
 define_command! {
-    doc: "`Find` command.",
+    doc: "`Find` command. Find device with blinking white LED.",
     Find, { "F".to_string() }, 300
 }
 
 define_command! {
-    doc: "`I2C,n` command, where `n` is of type `u16`.",
+    doc: "`I2C,n` command, where `n` is of type `u16`. Chance I2C address.",
     cmd: DeviceAddress(u16), { format!("I2C,{}", cmd) }, 300
 }
 
 define_command! {
-    doc: "`I` command.",
+    doc: "`I` command. Returns a `DeviceInfo` response. Device information.",
     DeviceInformation, { "I".to_string() }, 300,
     resp: DeviceInfo, { DeviceInfo::parse(&resp) }
 }
 
 define_command! {
-    doc: "`L,1` command.",
+    doc: "`L,1` command. Enable LED.",
     LedOn, { "L,1".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`L,0` command.",
+    doc: "`L,0` command. Disable LED.",
     LedOff, { "L,0".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`L,?` command.",
+    doc: "`L,?` command. Returns a `LedStatus` response. Get current LED status.",
     LedState, { "L,?".to_string() }, 300,
     resp: LedStatus, { LedStatus::parse(&resp) }
 }
 
 define_command! {
-    doc: "`K,0.1` command.",
+    doc: "`K,0.1` command. Set probe type to `0.1`.",
     ProbeTypePointOne, { "K,0.1".to_string() }, 600, Ack
 }
 
 define_command! {
-    doc: "`K,1.0` command.",
+    doc: "`K,1.0` command. Set probe type to `1.0`.",
     ProbeTypeOne, { "K,1.0".to_string() }, 600, Ack
 }
 
 define_command! {
-    doc: "`K,10.0` command.",
+    doc: "`K,10.0` command. Set probe type to `10.0`.",
     ProbeTypeTen, { "K,10.0".to_string() }, 600, Ack
 }
 
 define_command! {
-    doc: "`K,?` command.",
+    doc: "`K,?` command. Returns a `ProbeType` response. Get current probe type.",
     ProbeTypeState, { "K,?".to_string() }, 300,
     resp: ProbeType, { ProbeType::parse(&resp) }
 }
 
 define_command! {
-    doc: "`Plock,1` command.",
+    doc: "`Plock,1` command. Enable I2C protocol lock.",
     ProtocolLockEnable, { "Plock,1".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`Plock,0` command.",
+    doc: "`Plock,0` command. Disable I2C protocol lock.",
     ProtocolLockDisable, { "Plock,0".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`Plock,?` command. Returns a `ProtocolLockStatus` response.",
+    doc: "`Plock,?` command. Returns a `ProtocolLockStatus` response. Get the Protocol Lock status.",
     ProtocolLockState, { "Plock,?".to_string() }, 300,
     resp: ProtocolLockStatus, { ProtocolLockStatus::parse(&resp) }
 }
 
 define_command! {
-    doc: "`R` command. Returns a `ProbeReading` response.",
+    doc: "`R` command. Returns a `ProbeReading` response. Returns a single reading.",
     Reading, { "R".to_string() }, 600,
     resp: ProbeReading, { ProbeReading::parse(&resp) }
 }
 
 define_command! {
-    doc: "`O,EC,0` command.",
+    doc: "`O,EC,0` command. Disable conductivity in the output string.",
     OutputDisableConductivity, { "O,EC,0".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`O,EC,1` command.",
+    doc: "`O,EC,1` command. Enable conductivity in the output string.",
     OutputEnableConductivity, { "O,EC,1".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`O,TDS,0` command.",
+    doc: "`O,TDS,0` command. Disable total dissolved solids in the output string.",
     OutputDisableTds, { "O,TDS,0".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`O,TDS,1` command.",
+    doc: "`O,TDS,1` command. Enable total dissolved solids in the output string.",
     OutputEnableTds, { "O,TDS,1".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`O,S,0` command.",
+    doc: "`O,S,0` command. Disable salinity in the output string.",
     OutputDisableSalinity, { "O,S,0".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`O,S,1` command.",
+    doc: "`O,S,1` command. Enable salinity in the output string.",
     OutputEnableSalinity, { "O,S,1".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`O,SG,0` command.",
+    doc: "`O,SG,0` command. Disable specific gravity in the output string.",
     OutputDisableSpecificGravity, { "O,SG,0".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`O,SG,1` command.",
+    doc: "`O,SG,1` command. Enable specific gravity in the output string.",
     OutputEnableSpecificGravity, { "O,SG,1".to_string() }, 300, Ack
 }
 
 define_command! {
-    doc: "`O,?` command.",
+    doc: "`O,?` command. Returns an `OutputStringStatus` response. Displays the enabled parameters for the output string.",
     OutputState, { "O,?".to_string() }, 300,
     resp: OutputStringStatus, { OutputStringStatus::parse(&resp) }
 }
 
 define_command! {
-    doc: "`Status` command. Returns a `DeviceStatus` response.",
+    doc: "`Status` command. Returns a `DeviceStatus` response. Retrieve status information.",
     Status, { "Status".to_string() }, 300,
     resp: DeviceStatus, { DeviceStatus::parse(&resp) }
 }
 
 define_command! {
-    doc: "`Sleep` command.",
+    doc: "`Sleep` command. Enter sleep mode/low power.",
     Sleep, { "Sleep".to_string() }, 0
 }
 
 define_command! {
-    doc: "`T,t` command, where `t` is of type `f64`.",
+    doc: "`T,t` command, where `t` is of type `f64`. Returns a `TemperatureCompensation` response. Temperature compensation.",
     cmd: TemperatureCompensation(f64), { format!("T,{:.*}", 3, cmd) }, 300, Ack
 }
 
 define_command! {
-    doc: "`T,?` command. Returns a `CompensationValue` response.",
+    doc: "`T,?` command. Returns a `CompensationValue` response. Compensated temperature value.",
     CompensatedTemperatureValue, { "T,?".to_string() }, 300,
     resp: CompensationValue, { CompensationValue::parse(&resp) }
 }
