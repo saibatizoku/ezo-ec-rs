@@ -418,6 +418,7 @@ pub enum ProbeMetric {
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ProbeReading {
+    None,
     OneParameter(f64),
     TwoParameters(f64, f64),
     ThreeParameters(f64, f64, f64),
@@ -431,7 +432,7 @@ impl ProbeReading {
         let _one = if let Some(reading) = split.next() {
             f64::from_str(reading).chain_err(|| ErrorKind::ResponseParse)?
         } else {
-            return Err(ErrorKind::ResponseParse.into());
+            return Ok(ProbeReading::None);
         };
 
         let _two = if let Some(reading) = split.next() {
