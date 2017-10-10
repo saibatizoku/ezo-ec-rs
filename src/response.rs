@@ -178,6 +178,15 @@ impl Exported {
     }
 }
 
+impl fmt::Display for Exported {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            &Exported::ExportString(ref s) => write!(f, "{}", s),
+            &Exported::Done => write!(f, "DONE"),
+        }
+    }
+}
+
 /// Export the current calibration settings of the EC EZO chip.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct ExportedInfo {
@@ -214,6 +223,12 @@ impl ExportedInfo {
         } else {
             Err(ErrorKind::ResponseParse.into())
         }
+    }
+}
+
+impl fmt::Display for ExportedInfo {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{},{}", self.lines, self.total_bytes)
     }
 }
 
