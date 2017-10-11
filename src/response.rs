@@ -40,6 +40,16 @@ impl CalibrationStatus {
     }
 }
 
+impl fmt::Display for CalibrationStatus {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            CalibrationStatus::OnePoint => write!(f, "one-point"),
+            CalibrationStatus::TwoPoint => write!(f, "two-point"),
+            CalibrationStatus::NotCalibrated => write!(f, "none"),
+        }
+    }
+}
+
 /// Current temperature value used for pH compensation.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct CompensationValue(pub f64);
@@ -55,6 +65,12 @@ impl CompensationValue {
         } else {
             Err(ErrorKind::ResponseParse.into())
         }
+    }
+}
+
+impl fmt::Display for CompensationValue {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:.*}", 3, self.0)
     }
 }
 
@@ -111,6 +127,18 @@ pub enum RestartReason {
     Unknown,
 }
 
+impl fmt::Display for RestartReason {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            RestartReason::PoweredOff => write!(f, "powered-off"),
+            RestartReason::SoftwareReset => write!(f, "software-reset"),
+            RestartReason::BrownOut => write!(f, "brown-out"),
+            RestartReason::Watchdog => write!(f, "watchdog"),
+            RestartReason::Unknown => write!(f, "unknown"),
+        }
+    }
+}
+
 /// Response from the "Status" command to get the device status
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct DeviceStatus {
@@ -152,6 +180,12 @@ impl DeviceStatus {
         } else {
             Err(ErrorKind::ResponseParse.into())
         }
+    }
+}
+
+impl fmt::Display for DeviceStatus {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{},{:.*}", self.restart_reason, 3, self.vcc_voltage)
     }
 }
 
@@ -261,6 +295,15 @@ impl ProtocolLockStatus {
     }
 }
 
+impl fmt::Display for ProtocolLockStatus {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ProtocolLockStatus::On => write!(f, "on"),
+            ProtocolLockStatus::Off => write!(f, "off"),
+        }
+    }
+}
+
 /// Status of RTD EZO's LED.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum LedStatus {
@@ -280,6 +323,15 @@ impl LedStatus {
             }
         } else {
             Err(ErrorKind::ResponseParse.into())
+        }
+    }
+}
+
+impl fmt::Display for LedStatus {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            LedStatus::On => write!(f, "on"),
+            LedStatus::Off => write!(f, "off"),
         }
     }
 }
@@ -312,6 +364,16 @@ impl ProbeType {
             }
         } else {
             Err(ErrorKind::ResponseParse.into())
+        }
+    }
+}
+
+impl fmt::Display for ProbeType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ProbeType::PointOne => write!(f, "0.1"),
+            ProbeType::One => write!(f, "1.0"),
+            ProbeType::Ten => write!(f, "10"),
         }
     }
 }
@@ -420,6 +482,12 @@ impl OutputStringStatus {
             1...4 => _out.join(","),
             0 | _ => "No output".to_string(),
         }
+    }
+}
+
+impl fmt::Display for OutputStringStatus {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.to_string())
     }
 }
 
