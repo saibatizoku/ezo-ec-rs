@@ -50,7 +50,7 @@ impl fmt::Display for CalibrationStatus {
     }
 }
 
-/// Current temperature value used for pH compensation.
+/// Current temperature value used for sensor-reading compensation.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct CompensationValue(pub f64);
 
@@ -74,7 +74,7 @@ impl fmt::Display for CompensationValue {
     }
 }
 
-/// Current firmware settings of the RTD EZO chip.
+/// Current firmware settings of the EZO chip.
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeviceInfo {
     pub device: String,
@@ -304,7 +304,7 @@ impl fmt::Display for ProtocolLockStatus {
     }
 }
 
-/// Status of RTD EZO's LED.
+/// Status of EZO's LED.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum LedStatus {
     Off,
@@ -336,6 +336,7 @@ impl fmt::Display for LedStatus {
     }
 }
 
+/// The probe-type of the conductivity sensor.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ProbeType {
     PointOne,
@@ -384,6 +385,7 @@ pub enum ParameterStatus {
     Off,
 }
 
+/// Current configuration of which sensing metrics appear in the output string.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct OutputStringStatus {
     pub electric_conductivity: ParameterStatus,
@@ -499,6 +501,7 @@ pub enum ProbeMetric {
     SpecificGravity(f64),
 }
 
+/// Sample reading, can include from `None` to `FourParameters`.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ProbeReading {
     None,
