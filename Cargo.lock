@@ -1,13 +1,3 @@
-[root]
-name = "ezo_ec"
-version = "0.1.0"
-dependencies = [
- "chrono 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "error-chain 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "ezo_common 0.1.0 (git+https://github.com/saibatizoku/ezo-common-rs.git)",
- "i2cdev 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
 [[package]]
 name = "backtrace"
 version = "0.3.3"
@@ -94,6 +84,16 @@ source = "git+https://github.com/saibatizoku/ezo-common-rs.git#7f413655a07755d4b
 dependencies = [
  "chrono 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "error-chain 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "i2cdev 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "ezo_ec"
+version = "0.1.0"
+dependencies = [
+ "chrono 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "error-chain 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ezo_common 0.1.0 (git+https://github.com/saibatizoku/ezo-common-rs.git)",
  "i2cdev 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
