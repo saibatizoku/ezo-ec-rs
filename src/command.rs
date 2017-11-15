@@ -249,128 +249,290 @@ mod tests {
     #[test]
     fn build_command_baud_300() {
         let cmd = Baud(BpsRate::Bps300);
-        assert_eq!(cmd.get_command_string(), "Baud,300");
+        assert_eq!(cmd.get_command_string(), "BAUD,300");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_baud_300() {
+        let cmd = "baud,300".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps300));
+
+        let cmd = "BAUD,300".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps300));
     }
 
     #[test]
     fn build_command_baud_1200() {
         let cmd = Baud(BpsRate::Bps1200);
-        assert_eq!(cmd.get_command_string(), "Baud,1200");
+        assert_eq!(cmd.get_command_string(), "BAUD,1200");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_baud_1200() {
+        let cmd = "baud,1200".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps1200));
+
+        let cmd = "BAUD,1200".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps1200));
     }
 
     #[test]
     fn build_command_baud_2400() {
         let cmd = Baud(BpsRate::Bps2400);
-        assert_eq!(cmd.get_command_string(), "Baud,2400");
+        assert_eq!(cmd.get_command_string(), "BAUD,2400");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_baud_2400() {
+        let cmd = "baud,2400".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps2400));
+
+        let cmd = "BAUD,2400".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps2400));
     }
 
     #[test]
     fn build_command_baud_9600() {
         let cmd = Baud(BpsRate::Bps9600);
-        assert_eq!(cmd.get_command_string(), "Baud,9600");
+        assert_eq!(cmd.get_command_string(), "BAUD,9600");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_baud_9600() {
+        let cmd = "baud,9600".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps9600));
+
+        let cmd = "BAUD,9600".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps9600));
     }
 
     #[test]
     fn build_command_baud_19200() {
         let cmd = Baud(BpsRate::Bps19200);
-        assert_eq!(cmd.get_command_string(), "Baud,19200");
+        assert_eq!(cmd.get_command_string(), "BAUD,19200");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_baud_19200() {
+        let cmd = "baud,19200".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps19200));
+
+        let cmd = "BAUD,19200".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps19200));
     }
 
     #[test]
     fn build_command_baud_38400() {
         let cmd = Baud(BpsRate::Bps38400);
-        assert_eq!(cmd.get_command_string(), "Baud,38400");
+        assert_eq!(cmd.get_command_string(), "BAUD,38400");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_baud_38400() {
+        let cmd = "baud,38400".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps38400));
+
+        let cmd = "BAUD,38400".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps38400));
     }
 
     #[test]
     fn build_command_baud_57600() {
         let cmd = Baud(BpsRate::Bps57600);
-        assert_eq!(cmd.get_command_string(), "Baud,57600");
+        assert_eq!(cmd.get_command_string(), "BAUD,57600");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_baud_57600() {
+        let cmd = "baud,57600".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps57600));
+
+        let cmd = "BAUD,57600".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps57600));
     }
 
     #[test]
     fn build_command_baud_115200() {
         let cmd = Baud(BpsRate::Bps115200);
-        assert_eq!(cmd.get_command_string(), "Baud,115200");
+        assert_eq!(cmd.get_command_string(), "BAUD,115200");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_baud_115200() {
+        let cmd = "baud,115200".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps115200));
+
+        let cmd = "BAUD,115200".parse::<Baud>().unwrap();
+        assert_eq!(cmd, Baud(BpsRate::Bps115200));
     }
 
     #[test]
     fn build_command_calibration_dry() {
         let cmd = CalibrationDry;
-        assert_eq!(cmd.get_command_string(), "Cal,dry");
+        assert_eq!(cmd.get_command_string(), "CAL,DRY");
         assert_eq!(cmd.get_delay(), 800);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_calibration_dry() {
+        let cmd = "cal,dry".parse::<CalibrationDry>().unwrap();
+        assert_eq!(cmd, CalibrationDry);
+
+        let cmd = "Cal,Dry".parse::<CalibrationDry>().unwrap();
+        assert_eq!(cmd, CalibrationDry);
     }
 
     #[test]
     fn build_command_calibration_one_point() {
         let cmd = CalibrationOnePoint(84.);
-        assert_eq!(cmd.get_command_string(), "Cal,84.00");
+        assert_eq!(cmd.get_command_string(), "CAL,84.00");
         assert_eq!(cmd.get_delay(), 800);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_calibration_one_point() {
+        let cmd = "cal,0".parse::<CalibrationOnePoint>().unwrap();
+        assert_eq!(cmd, CalibrationOnePoint(0_f64));
+
+        let cmd = "Cal,11.43".parse::<CalibrationOnePoint>().unwrap();
+        assert_eq!(cmd, CalibrationOnePoint(11.43));
     }
 
     #[test]
     fn build_command_calibration_high() {
         let cmd = CalibrationHigh(12800.);
-        assert_eq!(cmd.get_command_string(), "Cal,high,12800.00");
+        assert_eq!(cmd.get_command_string(), "CAL,HIGH,12800.00");
         assert_eq!(cmd.get_delay(), 800);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_calibration_high() {
+        let cmd = "cal,high,0".parse::<CalibrationHigh>().unwrap();
+        assert_eq!(cmd, CalibrationHigh(0_f64));
+
+        let cmd = "Cal,HIGH,4121.43".parse::<CalibrationHigh>().unwrap();
+        assert_eq!(cmd, CalibrationHigh(4121.43));
     }
 
     #[test]
     fn build_command_calibration_low() {
         let cmd = CalibrationLow(1413.);
-        assert_eq!(cmd.get_command_string(), "Cal,low,1413.00");
+        assert_eq!(cmd.get_command_string(), "CAL,LOW,1413.00");
         assert_eq!(cmd.get_delay(), 800);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_calibration_low() {
+        let cmd = "cal,low,0".parse::<CalibrationLow>().unwrap();
+        assert_eq!(cmd, CalibrationLow(0_f64));
+
+        let cmd = "Cal,loW,-121.43".parse::<CalibrationLow>().unwrap();
+        assert_eq!(cmd, CalibrationLow(-121.43));
     }
 
     #[test]
     fn build_command_calibration_clear() {
         let cmd = CalibrationClear;
-        assert_eq!(cmd.get_command_string(), "Cal,clear");
+        assert_eq!(cmd.get_command_string(), "CAL,CLEAR");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_calibration_clear() {
+        let cmd = "cal,clear".parse::<CalibrationClear>().unwrap();
+        assert_eq!(cmd, CalibrationClear);
+
+        let cmd = "Cal,CLEAR".parse::<CalibrationClear>().unwrap();
+        assert_eq!(cmd, CalibrationClear);
     }
 
     #[test]
     fn build_command_calibration_state() {
         let cmd = CalibrationState;
-        assert_eq!(cmd.get_command_string(), "Cal,?");
+        assert_eq!(cmd.get_command_string(), "CAL,?");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_calibration_state() {
+        let cmd = "cal,?".parse::<CalibrationState>().unwrap();
+        assert_eq!(cmd, CalibrationState);
+
+        let cmd = "Cal,?".parse::<CalibrationState>().unwrap();
+        assert_eq!(cmd, CalibrationState);
     }
 
     #[test]
     fn build_command_export() {
         let cmd = Export;
-        assert_eq!(cmd.get_command_string(), "Export");
+        assert_eq!(cmd.get_command_string(), "EXPORT");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_export() {
+        let cmd = "export".parse::<Export>().unwrap();
+        assert_eq!(cmd, Export);
+
+        let cmd = "EXPORT".parse::<Export>().unwrap();
+        assert_eq!(cmd, Export);
     }
 
     #[test]
     fn build_command_export_info() {
         let cmd = ExportInfo;
-        assert_eq!(cmd.get_command_string(), "Export,?");
+        assert_eq!(cmd.get_command_string(), "EXPORT,?");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_export_info() {
+        let cmd = "export,?".parse::<ExportInfo>().unwrap();
+        assert_eq!(cmd, ExportInfo);
+
+        let cmd = "EXPORT,?".parse::<ExportInfo>().unwrap();
+        assert_eq!(cmd, ExportInfo);
     }
 
     #[test]
     fn build_command_import() {
         let calibration_string = "ABCDEFGHIJKLMNO".to_string();
         let cmd = Import(calibration_string);
-        assert_eq!(cmd.get_command_string(), "Import,ABCDEFGHIJKLMNO");
+        assert_eq!(cmd.get_command_string(), "IMPORT,ABCDEFGHIJKLMNO");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_import() {
+        let cmd = "import,1".parse::<Import>().unwrap();
+        assert_eq!(cmd, Import("1".to_string()));
+
+        let cmd = "IMPORT,abcdef".parse::<Import>().unwrap();
+        assert_eq!(cmd, Import("ABCDEF".to_string()));
     }
 
     #[test]
     fn build_command_factory() {
         let cmd = Factory;
-        assert_eq!(cmd.get_command_string(), "Factory");
+        assert_eq!(cmd.get_command_string(), "FACTORY");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_factory() {
+        let cmd = "factory".parse::<Factory>().unwrap();
+        assert_eq!(cmd, Factory);
+
+        let cmd = "FACTORY".parse::<Factory>().unwrap();
+        assert_eq!(cmd, Factory);
     }
 
     #[test]
@@ -381,10 +543,28 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_find() {
+        let cmd = "f".parse::<Find>().unwrap();
+        assert_eq!(cmd, Find);
+
+        let cmd = "F".parse::<Find>().unwrap();
+        assert_eq!(cmd, Find);
+    }
+
+    #[test]
     fn build_command_device_information() {
         let cmd = DeviceInformation;
         assert_eq!(cmd.get_command_string(), "I");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_device_information() {
+        let cmd = "i".parse::<DeviceInformation>().unwrap();
+        assert_eq!(cmd, DeviceInformation);
+
+        let cmd = "I".parse::<DeviceInformation>().unwrap();
+        assert_eq!(cmd, DeviceInformation);
     }
 
     #[test]
@@ -402,10 +582,28 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_probe_type_point_one() {
+        let cmd = "k,0.1".parse::<ProbeTypePointOne>().unwrap();
+        assert_eq!(cmd, ProbeTypePointOne);
+
+        let cmd = "K,0.1".parse::<ProbeTypePointOne>().unwrap();
+        assert_eq!(cmd, ProbeTypePointOne);
+    }
+
+    #[test]
     fn build_command_probe_type_one() {
         let cmd = ProbeTypeOne;
         assert_eq!(cmd.get_command_string(), "K,1.0");
         assert_eq!(cmd.get_delay(), 600);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_probe_type_one() {
+        let cmd = "k,1.0".parse::<ProbeTypeOne>().unwrap();
+        assert_eq!(cmd, ProbeTypeOne);
+
+        let cmd = "K,1.0".parse::<ProbeTypeOne>().unwrap();
+        assert_eq!(cmd, ProbeTypeOne);
     }
 
     #[test]
@@ -416,10 +614,28 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_probe_type_ten() {
+        let cmd = "k,10.0".parse::<ProbeTypeTen>().unwrap();
+        assert_eq!(cmd, ProbeTypeTen);
+
+        let cmd = "K,10.0".parse::<ProbeTypeTen>().unwrap();
+        assert_eq!(cmd, ProbeTypeTen);
+    }
+
+    #[test]
     fn build_command_probe_type_state() {
         let cmd = ProbeTypeState;
         assert_eq!(cmd.get_command_string(), "K,?");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_probe_type_state() {
+        let cmd = "k,?".parse::<ProbeTypeState>().unwrap();
+        assert_eq!(cmd, ProbeTypeState);
+
+        let cmd = "K,?".parse::<ProbeTypeState>().unwrap();
+        assert_eq!(cmd, ProbeTypeState);
     }
 
     #[test]
@@ -430,10 +646,28 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_led_on() {
+        let cmd = "l,1".parse::<LedOn>().unwrap();
+        assert_eq!(cmd, LedOn);
+
+        let cmd = "L,1".parse::<LedOn>().unwrap();
+        assert_eq!(cmd, LedOn);
+    }
+
+    #[test]
     fn build_command_led_off() {
         let cmd = LedOff;
         assert_eq!(cmd.get_command_string(), "L,0");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_led_off() {
+        let cmd = "l,0".parse::<LedOff>().unwrap();
+        assert_eq!(cmd, LedOff);
+
+        let cmd = "L,0".parse::<LedOff>().unwrap();
+        assert_eq!(cmd, LedOff);
     }
 
     #[test]
@@ -444,10 +678,28 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_led_state() {
+        let cmd = "l,?".parse::<LedState>().unwrap();
+        assert_eq!(cmd, LedState);
+
+        let cmd = "L,?".parse::<LedState>().unwrap();
+        assert_eq!(cmd, LedState);
+    }
+
+    #[test]
     fn build_command_output_disable_conductivity() {
         let cmd = OutputDisableConductivity;
         assert_eq!(cmd.get_command_string(), "O,EC,0");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_output_disable_conductivity() {
+        let cmd = "o,ec,0".parse::<OutputDisableConductivity>().unwrap();
+        assert_eq!(cmd, OutputDisableConductivity);
+
+        let cmd = "O,EC,0".parse::<OutputDisableConductivity>().unwrap();
+        assert_eq!(cmd, OutputDisableConductivity);
     }
 
     #[test]
@@ -458,10 +710,28 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_output_enable_conductivity() {
+        let cmd = "o,ec,1".parse::<OutputEnableConductivity>().unwrap();
+        assert_eq!(cmd, OutputEnableConductivity);
+
+        let cmd = "O,EC,1".parse::<OutputEnableConductivity>().unwrap();
+        assert_eq!(cmd, OutputEnableConductivity);
+    }
+
+    #[test]
     fn build_command_output_disable_tds() {
         let cmd = OutputDisableTds;
         assert_eq!(cmd.get_command_string(), "O,TDS,0");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_output_disable_tds() {
+        let cmd = "o,tds,0".parse::<OutputDisableTds>().unwrap();
+        assert_eq!(cmd, OutputDisableTds);
+
+        let cmd = "O,TDS,0".parse::<OutputDisableTds>().unwrap();
+        assert_eq!(cmd, OutputDisableTds);
     }
 
     #[test]
@@ -472,10 +742,28 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_output_enable_tds() {
+        let cmd = "o,tds,1".parse::<OutputEnableTds>().unwrap();
+        assert_eq!(cmd, OutputEnableTds);
+
+        let cmd = "O,TDS,1".parse::<OutputEnableTds>().unwrap();
+        assert_eq!(cmd, OutputEnableTds);
+    }
+
+    #[test]
     fn build_command_output_disable_salinity() {
         let cmd = OutputDisableSalinity;
         assert_eq!(cmd.get_command_string(), "O,S,0");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_output_disable_salinity() {
+        let cmd = "o,s,0".parse::<OutputDisableSalinity>().unwrap();
+        assert_eq!(cmd, OutputDisableSalinity);
+
+        let cmd = "O,S,0".parse::<OutputDisableSalinity>().unwrap();
+        assert_eq!(cmd, OutputDisableSalinity);
     }
 
     #[test]
@@ -486,10 +774,28 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_output_enable_salinity() {
+        let cmd = "o,s,1".parse::<OutputEnableSalinity>().unwrap();
+        assert_eq!(cmd, OutputEnableSalinity);
+
+        let cmd = "O,S,1".parse::<OutputEnableSalinity>().unwrap();
+        assert_eq!(cmd, OutputEnableSalinity);
+    }
+
+    #[test]
     fn build_command_output_disable_specific_gravity() {
         let cmd = OutputDisableSpecificGravity;
         assert_eq!(cmd.get_command_string(), "O,SG,0");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_output_disable_specific_gravity() {
+        let cmd = "o,sg,0".parse::<OutputDisableSpecificGravity>().unwrap();
+        assert_eq!(cmd, OutputDisableSpecificGravity);
+
+        let cmd = "O,SG,0".parse::<OutputDisableSpecificGravity>().unwrap();
+        assert_eq!(cmd, OutputDisableSpecificGravity);
     }
 
     #[test]
@@ -500,6 +806,15 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_output_enable_specific_gravity() {
+        let cmd = "o,sg,1".parse::<OutputEnableSpecificGravity>().unwrap();
+        assert_eq!(cmd, OutputEnableSpecificGravity);
+
+        let cmd = "O,SG,1".parse::<OutputEnableSpecificGravity>().unwrap();
+        assert_eq!(cmd, OutputEnableSpecificGravity);
+    }
+
+    #[test]
     fn build_command_output_state() {
         let cmd = OutputState;
         assert_eq!(cmd.get_command_string(), "O,?");
@@ -507,24 +822,60 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_output_state() {
+        let cmd = "o,?".parse::<OutputState>().unwrap();
+        assert_eq!(cmd, OutputState);
+
+        let cmd = "O,?".parse::<OutputState>().unwrap();
+        assert_eq!(cmd, OutputState);
+    }
+
+    #[test]
     fn build_command_plock_enable() {
         let cmd = ProtocolLockEnable;
-        assert_eq!(cmd.get_command_string(), "Plock,1");
+        assert_eq!(cmd.get_command_string(), "PLOCK,1");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_plock_enable() {
+        let cmd = "plock,1".parse::<ProtocolLockEnable>().unwrap();
+        assert_eq!(cmd, ProtocolLockEnable);
+
+        let cmd = "PLOCK,1".parse::<ProtocolLockEnable>().unwrap();
+        assert_eq!(cmd, ProtocolLockEnable);
     }
 
     #[test]
     fn build_command_plock_disable() {
         let cmd = ProtocolLockDisable;
-        assert_eq!(cmd.get_command_string(), "Plock,0");
+        assert_eq!(cmd.get_command_string(), "PLOCK,0");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_plock_disable() {
+        let cmd = "plock,0".parse::<ProtocolLockDisable>().unwrap();
+        assert_eq!(cmd, ProtocolLockDisable);
+
+        let cmd = "PLOCK,0".parse::<ProtocolLockDisable>().unwrap();
+        assert_eq!(cmd, ProtocolLockDisable);
     }
 
     #[test]
     fn build_command_plock_status() {
         let cmd = ProtocolLockState;
-        assert_eq!(cmd.get_command_string(), "Plock,?");
+        assert_eq!(cmd.get_command_string(), "PLOCK,?");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_plock_status() {
+        let cmd = "plock,?".parse::<ProtocolLockState>().unwrap();
+        assert_eq!(cmd, ProtocolLockState);
+
+        let cmd = "PLOCK,?".parse::<ProtocolLockState>().unwrap();
+        assert_eq!(cmd, ProtocolLockState);
     }
 
     #[test]
@@ -535,17 +886,44 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_reading() {
+        let cmd = "r".parse::<Reading>().unwrap();
+        assert_eq!(cmd, Reading);
+
+        let cmd = "R".parse::<Reading>().unwrap();
+        assert_eq!(cmd, Reading);
+    }
+
+    #[test]
     fn build_command_sleep_mode() {
         let cmd = Sleep;
-        assert_eq!(cmd.get_command_string(), "Sleep");
+        assert_eq!(cmd.get_command_string(), "SLEEP");
         assert_eq!(cmd.get_delay(), 0);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_sleep() {
+        let cmd = "Sleep".parse::<Sleep>().unwrap();
+        assert_eq!(cmd, Sleep);
+
+        let cmd = "SLEEP".parse::<Sleep>().unwrap();
+        assert_eq!(cmd, Sleep);
     }
 
     #[test]
     fn build_command_device_status() {
         let cmd = Status;
-        assert_eq!(cmd.get_command_string(), "Status");
+        assert_eq!(cmd.get_command_string(), "STATUS");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_device_status() {
+        let cmd = "status".parse::<Status>().unwrap();
+        assert_eq!(cmd, Status);
+
+        let cmd = "STATUS".parse::<Status>().unwrap();
+        assert_eq!(cmd, Status);
     }
 
     #[test]
@@ -556,9 +934,27 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_command_temperature_compensation() {
+        let cmd = "t,0".parse::<TemperatureCompensation>().unwrap();
+        assert_eq!(cmd, TemperatureCompensation(0_f64));
+
+        let cmd = "T,10.5".parse::<TemperatureCompensation>().unwrap();
+        assert_eq!(cmd, TemperatureCompensation(10.5));
+    }
+
+    #[test]
     fn build_command_temperature_compensation_value() {
         let cmd = CompensatedTemperatureValue;
         assert_eq!(cmd.get_command_string(), "T,?");
         assert_eq!(cmd.get_delay(), 300);
+    }
+
+    #[test]
+    fn parse_case_insensitive_command_temperature_compensation_value() {
+        let cmd = "t,?".parse::<CompensatedTemperatureValue>().unwrap();
+        assert_eq!(cmd, CompensatedTemperatureValue);
+
+        let cmd = "T,?".parse::<CompensatedTemperatureValue>().unwrap();
+        assert_eq!(cmd, CompensatedTemperatureValue);
     }
 }
