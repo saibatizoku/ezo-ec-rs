@@ -1,6 +1,6 @@
 [package]
 name = "ezo_ec"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Joaquín R <globojorro@gmail.com>"]
 
 [dependencies]
