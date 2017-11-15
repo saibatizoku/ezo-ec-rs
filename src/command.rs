@@ -1114,6 +1114,15 @@ mod tests {
     }
 
     #[test]
+    fn parse_case_insensitive_device_address() {
+        let cmd = "i2c,1".parse::<DeviceAddress>().unwrap();
+        assert_eq!(cmd, DeviceAddress(1));
+
+        let cmd = "I2C,123".parse::<DeviceAddress>().unwrap();
+        assert_eq!(cmd, DeviceAddress(123));
+    }
+
+    #[test]
     fn build_command_probe_type_point_one() {
         let cmd = ProbeTypePointOne;
         assert_eq!(cmd.get_command_string(), "K,0.1");
