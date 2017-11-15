@@ -14,6 +14,10 @@ error_chain! {
             display ("response is not a valid nul-terminated UTF-8 string")
         }
         // The response could not be parsed
+        CommandParse {
+            description ("could not parse command")
+        }
+        // The response could not be parsed
         ResponseParse {
             description ("could not parse response")
         }

@@ -1,5 +1,6 @@
 //! I2C Commands for EC EZO Chip.
 //!
+use std::str::FromStr;
 use std::thread;
 use std::time::Duration;
 
@@ -43,70 +44,298 @@ pub trait Command {
 
 define_command! {
     doc: "`Baud,n` command, where `n` is a variant belonging to `BpsRate`. Switch chip to UART mode.",
-    cmd: Baud(BpsRate), { format!("Baud,{}", cmd.parse()) }, 0
+    cmd: Baud(BpsRate), { format!("BAUD,{}", cmd.parse()) }, 0
+}
+
+impl FromStr for Baud {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        if supper.starts_with("BAUD,") {
+            let rest = supper.get(5..).unwrap();
+            let mut split = rest.split(',');
+            let rate = match split.next() {
+                Some("300") => BpsRate::Bps300,
+                Some("1200") => BpsRate::Bps1200,
+                Some("2400") => BpsRate::Bps2400,
+                Some("9600") => BpsRate::Bps9600,
+                Some("19200") => BpsRate::Bps19200,
+                Some("38400") => BpsRate::Bps38400,
+                Some("57600") => BpsRate::Bps57600,
+                Some("115200") => BpsRate::Bps115200,
+                _ => bail!(ErrorKind::CommandParse),
+            };
+            match split.next() {
+                None => return Ok(Baud(rate)),
+                _ => bail!(ErrorKind::CommandParse),
+            }
+        } else {
+            bail!(ErrorKind::CommandParse);
+        }
+    }
 }
 
 define_command! {
-    doc: "`Cal,dry` command. Performs calibration.",
-    CalibrationDry, { "Cal,dry".to_string() }, 800, Ack
+    doc: "`CAL,DRY` command. Performs calibration.",
+    CalibrationDry, { "CAL,DRY".to_string() }, 800, Ack
+}
+
+impl FromStr for CalibrationDry {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "CAL,DRY" => Ok(CalibrationDry),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
+
+define_command! {
+    doc: "`CAL,n` command, where `n` is a `f64` number. Performs calibration.",
+    cmd: CalibrationOnePoint(f64), { format!("CAL,{:.*}", 2, cmd) }, 800, Ack
+}
+
+impl FromStr for CalibrationOnePoint {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        if supper.starts_with("CAL,") {
+            let rest = supper.get(4..).unwrap();
+            let mut split = rest.split(',');
+            let value = match split.next() {
+                Some(n) => n.parse::<f64>().unwrap(),
+                _ => bail!(ErrorKind::CommandParse),
+            };
+            match split.next() {
+                None => return Ok(CalibrationOnePoint(value)),
+                _ => bail!(ErrorKind::CommandParse),
+            }
+        } else {
+            bail!(ErrorKind::CommandParse);
+        }
+    }
 }
 
 define_command! {
-    doc: "`Cal,n` command, where `n` is a `f64` number. Performs calibration.",
-    cmd: CalibrationOnePoint(f64), { format!("Cal,{:.*}", 2, cmd) }, 800, Ack
+    doc: "`CAL,LOW,t` command, where `t` is of type `f64`. Performs calibration.",
+    cmd: CalibrationLow(f64), { format!("CAL,LOW,{:.*}", 2, cmd) }, 800, Ack
+}
+
+impl FromStr for CalibrationLow {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        if supper.starts_with("CAL,LOW,") {
+            let rest = supper.get(8..).unwrap();
+            let mut split = rest.split(',');
+            let value = match split.next() {
+                Some(n) => n.parse::<f64>().unwrap(),
+                _ => bail!(ErrorKind::CommandParse),
+            };
+            match split.next() {
+                None => return Ok(CalibrationLow(value)),
+                _ => bail!(ErrorKind::CommandParse),
+            }
+        } else {
+            bail!(ErrorKind::CommandParse);
+        }
+    }
 }
 
 define_command! {
-    doc: "`Cal,low,t` command, where `t` is of type `f64`. Performs calibration.",
-    cmd: CalibrationLow(f64), { format!("Cal,low,{:.*}", 2, cmd) }, 800, Ack
+    doc: "`CAL,HIGH,t` command, where `t` is of type `f64`. Performs calibration.",
+    cmd: CalibrationHigh(f64), { format!("CAL,HIGH,{:.*}", 2, cmd) }, 800, Ack
+}
+
+impl FromStr for CalibrationHigh {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        if supper.starts_with("CAL,HIGH,") {
+            let rest = supper.get(9..).unwrap();
+            let mut split = rest.split(',');
+            let value = match split.next() {
+                Some(n) => n.parse::<f64>().unwrap(),
+                _ => bail!(ErrorKind::CommandParse),
+            };
+            match split.next() {
+                None => return Ok(CalibrationHigh(value)),
+                _ => bail!(ErrorKind::CommandParse),
+            }
+        } else {
+            bail!(ErrorKind::CommandParse);
+        }
+    }
 }
 
 define_command! {
-    doc: "`Cal,high,t` command, where `t` is of type `f64`. Performs calibration.",
-    cmd: CalibrationHigh(f64), { format!("Cal,high,{:.*}", 2, cmd) }, 800, Ack
+    doc: "`CAL,CLEAR` command. Clears current calibration.",
+    CalibrationClear, { "CAL,CLEAR".to_string() }, 300, Ack
+}
+
+impl FromStr for CalibrationClear {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "CAL,CLEAR" => Ok(CalibrationClear),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
-    doc: "`Cal,clear` command. Clears current calibration.",
-    CalibrationClear, { "Cal,clear".to_string() }, 300, Ack
-}
-
-define_command! {
-    doc: "`Cal,?` command. Returns a `CalibrationStatus` response. Current calibration status.",
-    CalibrationState, { "Cal,?".to_string() }, 300,
+    doc: "`CAL,?` command. Returns a `CalibrationStatus` response. Current calibration status.",
+    CalibrationState, { "CAL,?".to_string() }, 300,
     resp: CalibrationStatus, { CalibrationStatus::parse(&resp) }
 }
 
+impl FromStr for CalibrationState {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "CAL,?" => Ok(CalibrationState),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
-    doc: "`Export` command. Returns an `Exported` response. Exports current calibration.",
-    Export, { "Export".to_string() }, 300,
+    doc: "`EXPORT` command. Returns an `Exported` response. Exports current calibration.",
+    Export, { "EXPORT".to_string() }, 300,
     resp: Exported, { Exported::parse(&resp) }
 }
 
+impl FromStr for Export {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "EXPORT" => Ok(Export),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
-    doc: "`ExportInfo` command. Returns an `ExportedInfo` response. Calibration string info.",
-    ExportInfo, { "Export,?".to_string() }, 300,
+    doc: "`EXPORT,?` command. Returns an `ExportedInfo` response. Calibration string info.",
+    ExportInfo, { "EXPORT,?".to_string() }, 300,
     resp: ExportedInfo, { ExportedInfo::parse(&resp) }
 }
 
-define_command! {
-    doc: "`Import,n` command, where `n` is of type `String`.",
-    cmd: Import(String), { format!("Import,{}", cmd) }, 300, Ack
+impl FromStr for ExportInfo {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "EXPORT,?" => Ok(ExportInfo),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
-    doc: "`Factory` command. Enable factory reset.",
-    Factory, { "Factory".to_string() }, 0
+    doc: "`IMPORT,n` command, where `n` is of type `String`.",
+    cmd: Import(String), { format!("IMPORT,{}", cmd) }, 300, Ack
+}
+
+impl FromStr for Import {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        if supper.starts_with("IMPORT,") {
+            let rest = supper.get(7..).unwrap();
+            let mut split = rest.split(',');
+            let value = match split.next() {
+                Some(n) if n.len() > 0 && n.len() < 13 => {
+                    n.to_string()
+                }
+                _ => bail!(ErrorKind::CommandParse),
+            };
+            match split.next() {
+                None => return Ok(Import(value)),
+                _ => bail!(ErrorKind::CommandParse),
+            }
+        } else {
+            bail!(ErrorKind::CommandParse);
+        }
+    }
 }
 
 define_command! {
-    doc: "`Find` command. Find device with blinking white LED.",
+    doc: "`FACTORY` command. Enable factory reset.",
+    Factory, { "FACTORY".to_string() }, 0
+}
+
+impl FromStr for Factory {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "FACTORY" => Ok(Factory),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
+define_command! {
+    doc: "`FIND` command. Find device with blinking white LED.",
     Find, { "F".to_string() }, 300
+}
+
+impl FromStr for Find {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "F" => Ok(Find),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
     doc: "`I2C,n` command, where `n` is of type `u16`. Chance I2C address.",
     cmd: DeviceAddress(u16), { format!("I2C,{}", cmd) }, 300
+}
+
+impl FromStr for DeviceAddress {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        if supper.starts_with("I2C,") {
+            let rest = supper.get(4..).unwrap();
+            let mut split = rest.split(',');
+            let value = match split.next() {
+                Some(n) => {
+                    n.parse::<u16>().unwrap()
+                }
+                _ => bail!(ErrorKind::CommandParse),
+            };
+            match split.next() {
+                None => return Ok(DeviceAddress(value)),
+                _ => bail!(ErrorKind::CommandParse),
+            }
+        } else {
+            bail!(ErrorKind::CommandParse);
+        }
+    }
 }
 
 define_command! {
@@ -115,14 +344,50 @@ define_command! {
     resp: DeviceInfo, { DeviceInfo::parse(&resp) }
 }
 
+impl FromStr for DeviceInformation {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "I" => Ok(DeviceInformation),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
     doc: "`L,1` command. Enable LED.",
     LedOn, { "L,1".to_string() }, 300, Ack
 }
 
+impl FromStr for LedOn {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "L,1" => Ok(LedOn),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
     doc: "`L,0` command. Disable LED.",
     LedOff, { "L,0".to_string() }, 300, Ack
+}
+
+impl FromStr for LedOff {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "L,0" => Ok(LedOff),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
@@ -131,9 +396,33 @@ define_command! {
     resp: LedStatus, { LedStatus::parse(&resp) }
 }
 
+impl FromStr for LedState {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "L,?" => Ok(LedState),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
     doc: "`K,0.1` command. Set probe type to `0.1`.",
     ProbeTypePointOne, { "K,0.1".to_string() }, 600, Ack
+}
+
+impl FromStr for ProbeTypePointOne {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "K,0.1" => Ok(ProbeTypePointOne),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
@@ -141,9 +430,33 @@ define_command! {
     ProbeTypeOne, { "K,1.0".to_string() }, 600, Ack
 }
 
+impl FromStr for ProbeTypeOne {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "K,1.0" => Ok(ProbeTypeOne),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
     doc: "`K,10.0` command. Set probe type to `10.0`.",
     ProbeTypeTen, { "K,10.0".to_string() }, 600, Ack
+}
+
+impl FromStr for ProbeTypeTen {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "K,10.0" => Ok(ProbeTypeTen),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
@@ -152,20 +465,68 @@ define_command! {
     resp: ProbeType, { ProbeType::parse(&resp) }
 }
 
-define_command! {
-    doc: "`Plock,1` command. Enable I2C protocol lock.",
-    ProtocolLockEnable, { "Plock,1".to_string() }, 300, Ack
+impl FromStr for ProbeTypeState {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "K,?" => Ok(ProbeTypeState),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
-    doc: "`Plock,0` command. Disable I2C protocol lock.",
-    ProtocolLockDisable, { "Plock,0".to_string() }, 300, Ack
+    doc: "`PLOCK,1` command. Enable I2C protocol lock.",
+    ProtocolLockEnable, { "PLOCK,1".to_string() }, 300, Ack
+}
+
+impl FromStr for ProtocolLockEnable {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "PLOCK,1" => Ok(ProtocolLockEnable),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
-    doc: "`Plock,?` command. Returns a `ProtocolLockStatus` response. Get the Protocol Lock status.",
-    ProtocolLockState, { "Plock,?".to_string() }, 300,
+    doc: "`PLOCK,0` command. Disable I2C protocol lock.",
+    ProtocolLockDisable, { "PLOCK,0".to_string() }, 300, Ack
+}
+
+impl FromStr for ProtocolLockDisable {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "PLOCK,0" => Ok(ProtocolLockDisable),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
+define_command! {
+    doc: "`PLOCK,?` command. Returns a `ProtocolLockStatus` response. Get the Protocol Lock status.",
+    ProtocolLockState, { "PLOCK,?".to_string() }, 300,
     resp: ProtocolLockStatus, { ProtocolLockStatus::parse(&resp) }
+}
+
+impl FromStr for ProtocolLockState {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "PLOCK,?" => Ok(ProtocolLockState),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
@@ -174,9 +535,33 @@ define_command! {
     resp: ProbeReading, { ProbeReading::parse(&resp) }
 }
 
+impl FromStr for Reading {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "R" => Ok(Reading),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
     doc: "`O,EC,0` command. Disable conductivity in the output string.",
     OutputDisableConductivity, { "O,EC,0".to_string() }, 300, Ack
+}
+
+impl FromStr for OutputDisableConductivity {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "O,EC,0" => Ok(OutputDisableConductivity),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
@@ -184,9 +569,33 @@ define_command! {
     OutputEnableConductivity, { "O,EC,1".to_string() }, 300, Ack
 }
 
+impl FromStr for OutputEnableConductivity {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "O,EC,1" => Ok(OutputEnableConductivity),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
     doc: "`O,TDS,0` command. Disable total dissolved solids in the output string.",
     OutputDisableTds, { "O,TDS,0".to_string() }, 300, Ack
+}
+
+impl FromStr for OutputDisableTds {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "O,TDS,0" => Ok(OutputDisableTds),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
@@ -194,9 +603,33 @@ define_command! {
     OutputEnableTds, { "O,TDS,1".to_string() }, 300, Ack
 }
 
+impl FromStr for OutputEnableTds {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "O,TDS,1" => Ok(OutputEnableTds),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
     doc: "`O,S,0` command. Disable salinity in the output string.",
     OutputDisableSalinity, { "O,S,0".to_string() }, 300, Ack
+}
+
+impl FromStr for OutputDisableSalinity {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "O,S,0" => Ok(OutputDisableSalinity),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
@@ -204,14 +637,50 @@ define_command! {
     OutputEnableSalinity, { "O,S,1".to_string() }, 300, Ack
 }
 
+impl FromStr for OutputEnableSalinity {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "O,S,1" => Ok(OutputEnableSalinity),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
     doc: "`O,SG,0` command. Disable specific gravity in the output string.",
     OutputDisableSpecificGravity, { "O,SG,0".to_string() }, 300, Ack
 }
 
+impl FromStr for OutputDisableSpecificGravity {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "O,SG,0" => Ok(OutputDisableSpecificGravity),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
 define_command! {
     doc: "`O,SG,1` command. Enable specific gravity in the output string.",
     OutputEnableSpecificGravity, { "O,SG,1".to_string() }, 300, Ack
+}
+
+impl FromStr for OutputEnableSpecificGravity {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "O,SG,1" => Ok(OutputEnableSpecificGravity),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
@@ -220,15 +689,51 @@ define_command! {
     resp: OutputStringStatus, { OutputStringStatus::parse(&resp) }
 }
 
-define_command! {
-    doc: "`Status` command. Returns a `DeviceStatus` response. Retrieve status information.",
-    Status, { "Status".to_string() }, 300,
-    resp: DeviceStatus, { DeviceStatus::parse(&resp) }
+impl FromStr for OutputState {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "O,?" => Ok(OutputState),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
-    doc: "`Sleep` command. Enter sleep mode/low power.",
-    Sleep, { "Sleep".to_string() }, 0
+    doc: "`STATUS` command. Returns a `DeviceStatus` response. Retrieve status information.",
+    Status, { "STATUS".to_string() }, 300,
+    resp: DeviceStatus, { DeviceStatus::parse(&resp) }
+}
+
+impl FromStr for Status {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "STATUS" => Ok(Status),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
+}
+
+define_command! {
+    doc: "`SLEEP` command. Enter sleep mode/low power.",
+    Sleep, { "SLEEP".to_string() }, 0
+}
+
+impl FromStr for Sleep {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "SLEEP" => Ok(Sleep),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 define_command! {
@@ -236,10 +741,44 @@ define_command! {
     cmd: TemperatureCompensation(f64), { format!("T,{:.*}", 3, cmd) }, 300, Ack
 }
 
+impl FromStr for TemperatureCompensation {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        if supper.starts_with("T,") {
+            let rest = supper.get(2..).unwrap();
+            let mut split = rest.split(',');
+            let value = match split.next() {
+                Some(n) => n.parse::<f64>().unwrap(),
+                _ => bail!(ErrorKind::CommandParse),
+            };
+            match split.next() {
+                None => return Ok(TemperatureCompensation(value)),
+                _ => bail!(ErrorKind::CommandParse),
+            }
+        } else {
+            bail!(ErrorKind::CommandParse);
+        }
+    }
+}
+
 define_command! {
     doc: "`T,?` command. Returns a `CompensationValue` response. Compensated temperature value.",
     CompensatedTemperatureValue, { "T,?".to_string() }, 300,
     resp: CompensationValue, { CompensationValue::parse(&resp) }
+}
+
+impl FromStr for CompensatedTemperatureValue {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let supper = s.to_uppercase();
+        match supper.as_ref() {
+            "T,?" => Ok(CompensatedTemperatureValue),
+            _ => bail!(ErrorKind::CommandParse),
+        }
+    }
 }
 
 #[cfg(test)]
