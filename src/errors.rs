@@ -13,7 +13,7 @@ error_chain! {
             description ("malformed response")
             display ("response is not a valid nul-terminated UTF-8 string")
         }
-        // The response could not be parsed
+        // The command could not be parsed
         CommandParse {
             description ("could not parse command")
         }
