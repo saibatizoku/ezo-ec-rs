@@ -447,7 +447,7 @@ impl fmt::Debug for ProbeType {
         match *self {
             ProbeType::PointOne => write!(f, "?K,0.1"),
             ProbeType::One => write!(f, "?K,1.0"),
-            ProbeType::Ten => write!(f, "?K,10"),
+            ProbeType::Ten => write!(f, "?K,10.0"),
         }
     }
 }
@@ -457,7 +457,7 @@ impl fmt::Display for ProbeType {
         match *self {
             ProbeType::PointOne => write!(f, "0.1"),
             ProbeType::One => write!(f, "1.0"),
-            ProbeType::Ten => write!(f, "10"),
+            ProbeType::Ten => write!(f, "10.0"),
         }
     }
 }
