@@ -12,6 +12,7 @@ pub use ezo_common::response::{
     Exported,
     ExportedInfo,
     LedStatus,
+    ResponseStatus,
     RestartReason,
     ProtocolLockStatus,
 };

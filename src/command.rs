@@ -19,6 +19,7 @@ use ezo_common::{
     string_from_response_data,
     write_to_ezo,
 };
+use ezo_common::response::ResponseStatus;
 
 use i2cdev::core::I2CDevice;
 use i2cdev::linux::LinuxI2CDevice;
