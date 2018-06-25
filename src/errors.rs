@@ -1,43 +1,62 @@
 //! Create the Error, ErrorKind, ResultExt, and Result types.
-use ezo_common;
+use failure::{Backtrace, Context, Fail};
+use std::fmt::{self, Display};
 
-error_chain! {
-    errors {
-        // The unsuccessful response code
-        I2CRead {
-            description ("unsuccessful device read")
-            display ("response was not obtainable")
-        }
-        // The response is not nul-terminated, or it is not valid ASCII/UTF-8
-        MalformedResponse {
-            description ("malformed response")
-            display ("response is not a valid nul-terminated UTF-8 string")
-        }
-        // The command could not be parsed
-        CommandParse {
-            description ("could not parse command")
-        }
-        // The response could not be parsed
-        ResponseParse {
-            description ("could not parse response")
-        }
-        // Any response code that is `Pending`
-        PendingResponse {
-            description ("response is pending")
-            display ("response was not yet available")
-        }
-        // Any response code that is `DeviceError`
-        DeviceErrorResponse {
-            description ("response is error")
-            display ("the device responded with an error")
-        }
-        // Any response code that is `NoDataExpected`
-        NoDataExpectedResponse {
-            description ("no data was expected")
-            display ("the device has no data to respond")
+#[derive(Debug)]
+pub struct EcError {
+    inner: Context<ErrorKind>,
+}
+
+#[derive(Copy, Clone, Eq, Debug, Fail, PartialEq)]
+pub enum ErrorKind {
+    #[fail(display = "response was not obtainable")]
+    I2CRead,
+    #[fail(display = "response is not a valid nul-terminated UTF-8 string")]
+    MalformedResponse,
+    #[fail(display = "could not parse command")]
+    CommandParse,
+    #[fail(display = "could not parse response")]
+    ResponseParse,
+    #[fail(display = "response was not yet available")]
+    PendingResponse,
+    #[fail(display = "the device responded with an error")]
+    DeviceErrorResponse,
+    #[fail(display = "the device has no data to respond")]
+    NoDataExpectedResponse,
+}
+
+impl Fail for EcError {
+    fn cause(&self) -> Option<&Fail> {
+        self.inner.cause()
+    }
+
+    fn backtrace(&self) -> Option<&Backtrace> {
+        self.inner.backtrace()
+    }
+}
+
+impl Display for EcError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Display::fmt(&self.inner, f)
+    }
+}
+
+impl EcError {
+    pub fn kind(&self) -> ErrorKind {
+        *self.inner.get_context()
+    }
+}
+
+impl From<ErrorKind> for EcError {
+    fn from(kind: ErrorKind) -> EcError {
+        EcError {
+            inner: Context::new(kind),
         }
     }
-    links {
-        Ezo(ezo_common::errors::Error, ezo_common::errors::ErrorKind);
+}
+
+impl From<Context<ErrorKind>> for EcError {
+    fn from(inner: Context<ErrorKind>) -> EcError {
+        EcError { inner: inner }
     }
 }

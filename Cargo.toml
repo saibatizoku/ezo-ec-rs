@@ -5,8 +5,8 @@ authors = ["Joaquín R <globojorro@gmail.com>"]
 
 [dependencies]
 chrono = "0.4.0"
-error-chain = "~0.11.0"
 ezo_common = { git = "https://github.com/saibatizoku/ezo-common-rs.git", branch = "master" }
+failure = "0.1"
 i2cdev = "0.4"
 
 [profile.release]

@@ -123,8 +123,8 @@ name = "ezo_ec"
 version = "0.1.1"
 dependencies = [
  "chrono 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "error-chain 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "ezo_common 0.1.1 (git+https://github.com/saibatizoku/ezo-common-rs.git)",
+ "failure 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "i2cdev 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

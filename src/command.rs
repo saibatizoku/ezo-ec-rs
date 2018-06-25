@@ -1,25 +1,18 @@
 //! I2C Commands for EC EZO Chip.
 //!
+use std::result;
 use std::str::FromStr;
 use std::thread;
 use std::time::Duration;
 
-use errors::*;
-use response::{
-    CalibrationStatus,
-    CompensationValue,
-    ProbeType,
-    OutputStringStatus,
-    ProbeReading,
-};
+use errors::ErrorKind;
+use failure::{Error, ResultExt};
+
+use response::{CalibrationStatus, CompensationValue, OutputStringStatus, ProbeReading, ProbeType};
 
 use ezo_common::{
-    ResponseCode,
-    response_code,
-    string_from_response_data,
-    write_to_ezo,
+    response::ResponseStatus, response_code, string_from_response_data, write_to_ezo, ResponseCode,
 };
-use ezo_common::response::ResponseStatus;
 
 use i2cdev::core::I2CDevice;
 use i2cdev::linux::LinuxI2CDevice;
@@ -27,27 +20,15 @@ use i2cdev::linux::LinuxI2CDevice;
 /// Maximum ascii-character response size + 2
 pub const MAX_DATA: usize = 401;
 
+pub use ezo_common::command::{
+    Baud, CalibrationClear, DeviceAddress, DeviceInformation, Export, ExportInfo, Factory, Find,
+    Import, LedOff, LedOn, LedState, ProtocolLockDisable, ProtocolLockEnable, ProtocolLockState,
+    Sleep, Status,
+};
 /// I2C command for the EZO chip.
 pub use ezo_common::Command;
-pub use ezo_common::command::{
-    Baud,
-    CalibrationClear,
-    DeviceAddress,
-    DeviceInformation,
-    Export,
-    ExportInfo,
-    Factory,
-    Find,
-    Import,
-    LedOff,
-    LedOn,
-    LedState,
-    ProtocolLockEnable,
-    ProtocolLockDisable,
-    ProtocolLockState,
-    Status,
-    Sleep,
-};
+
+pub type Result<T> = result::Result<T, Error>;
 
 define_command! {
     doc: "`CAL,?` command. Returns a `CalibrationStatus` response. Current calibration status.",
@@ -84,7 +65,6 @@ impl FromStr for CalibrationDry {
     }
 }
 
-
 define_command! {
     doc: "`CAL,n` command, where `n` is a `f64` number. Performs calibration.",
     cmd: CalibrationOnePoint(f64), { format!("CAL,{:.*}", 2, cmd) }, 800, Ack
@@ -99,10 +79,7 @@ impl FromStr for CalibrationOnePoint {
             let rest = supper.get(4..).unwrap();
             let mut split = rest.split(',');
             let value = match split.next() {
-                Some(n) => {
-                    n.parse::<f64>()
-                        .chain_err(|| ErrorKind::CommandParse)?
-                }
+                Some(n) => n.parse::<f64>().context(ErrorKind::CommandParse)?,
                 _ => bail!(ErrorKind::CommandParse),
             };
             match split.next() {
@@ -129,10 +106,7 @@ impl FromStr for CalibrationLow {
             let rest = supper.get(8..).unwrap();
             let mut split = rest.split(',');
             let value = match split.next() {
-                Some(n) => {
-                    n.parse::<f64>()
-                        .chain_err(|| ErrorKind::CommandParse)?
-                }
+                Some(n) => n.parse::<f64>().context(ErrorKind::CommandParse)?,
                 _ => bail!(ErrorKind::CommandParse),
             };
             match split.next() {
@@ -159,10 +133,7 @@ impl FromStr for CalibrationHigh {
             let rest = supper.get(9..).unwrap();
             let mut split = rest.split(',');
             let value = match split.next() {
-                Some(n) => {
-                    n.parse::<f64>()
-                        .chain_err(|| ErrorKind::CommandParse)?
-                }
+                Some(n) => n.parse::<f64>().context(ErrorKind::CommandParse)?,
                 _ => bail!(ErrorKind::CommandParse),
             };
             match split.next() {
@@ -430,10 +401,7 @@ impl FromStr for TemperatureCompensation {
             let rest = supper.get(2..).unwrap();
             let mut split = rest.split(',');
             let value = match split.next() {
-                Some(n) => {
-                    n.parse::<f64>()
-                        .chain_err(|| ErrorKind::CommandParse)?
-                }
+                Some(n) => n.parse::<f64>().context(ErrorKind::CommandParse)?,
                 _ => bail!(ErrorKind::CommandParse),
             };
             match split.next() {
