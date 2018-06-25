@@ -1,4 +1,4 @@
-//! Create the Error, ErrorKind, ResultExt, and Result types.
+//! EC Sensor Errors.
 use failure::{Backtrace, Context, Fail};
 use std::fmt::{self, Display};
 
