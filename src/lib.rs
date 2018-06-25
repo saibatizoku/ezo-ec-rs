@@ -3,7 +3,6 @@
 //! calibration, sleep mode, scale, etc.
 #![feature(str_checked_slicing)]
 #![feature(exclusive_range_pattern)]
-#![recursion_limit = "1024"]
 
 #[macro_use]
 extern crate failure;

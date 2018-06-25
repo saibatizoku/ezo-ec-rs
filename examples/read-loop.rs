@@ -1,6 +1,5 @@
 //! An example that takes readings from the EC EZO chip in a loop.
 //!
-#![recursion_limit = "1024"]
 extern crate chrono;
 extern crate ezo_ec;
 extern crate failure;
