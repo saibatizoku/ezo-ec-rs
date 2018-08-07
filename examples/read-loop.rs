@@ -11,7 +11,6 @@ use std::time::Duration;
 use chrono::{DateTime, Utc};
 
 use ezo_ec::command::{Command, OutputState, Reading, Sleep};
-use ezo_ec::errors::*;
 use ezo_ec::response::{OutputStringStatus, ProbeReading};
 
 use failure::{Error, ResultExt};

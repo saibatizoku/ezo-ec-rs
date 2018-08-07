@@ -8,7 +8,6 @@ use ezo_ec::{
     command::{
         CalibrationState, Command, DeviceInformation, LedState, OutputState, Reading, Sleep, Status,
     },
-    errors::*,
     response::{
         CalibrationStatus, DeviceInfo, DeviceStatus, LedStatus, OutputStringStatus, ProbeReading,
     },

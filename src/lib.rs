@@ -10,8 +10,5 @@ extern crate failure;
 extern crate ezo_common;
 extern crate i2cdev;
 
-// Use error-chain.
-pub mod errors;
-
 pub mod command;
 pub mod response;
