@@ -5,15 +5,15 @@ use std::fmt;
 use std::result;
 use std::str::FromStr;
 
-use errors::ErrorKind;
-use failure::{Error, ResultExt};
+use ezo_common::errors::{ErrorKind, EzoError};
+use failure::ResultExt;
 
 pub use ezo_common::response::{
     DeviceInfo, DeviceStatus, Exported, ExportedInfo, LedStatus, ProtocolLockStatus,
     ResponseStatus, RestartReason,
 };
 
-pub type Result<T> = result::Result<T, Error>;
+pub type Result<T> = result::Result<T, EzoError>;
 
 /// Calibration status of the EC EZO chip.
 #[derive(Copy, Clone, PartialEq)]
