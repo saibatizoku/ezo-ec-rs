@@ -1,14 +1,14 @@
 //! I2C Commands for EC EZO Chip.
 //!
-use std::result;
 use std::str::FromStr;
 use std::thread;
 use std::time::Duration;
 
-use ezo_common::errors::{ErrorKind, EzoError};
+use super::{ErrorKind, EzoError};
+use super::response::{CalibrationStatus, CompensationValue, OutputStringStatus, ProbeReading, ProbeType};
+
 use failure::{ResultExt};
 
-use response::{CalibrationStatus, CompensationValue, OutputStringStatus, ProbeReading, ProbeType};
 
 use ezo_common::{
     response::ResponseStatus, response_code, string_from_response_data, write_to_ezo, ResponseCode,
@@ -28,7 +28,6 @@ pub use ezo_common::command::{
 /// I2C command for the EZO chip.
 pub use ezo_common::Command;
 
-pub type Result<T> = result::Result<T, EzoError>;
 
 define_command! {
     doc: "`CAL,?` command. Returns a `CalibrationStatus` response. Current calibration status.",
@@ -39,7 +38,7 @@ define_command! {
 impl FromStr for CalibrationState {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "CAL,?" => Ok(CalibrationState),
@@ -56,7 +55,7 @@ define_command! {
 impl FromStr for CalibrationDry {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "CAL,DRY" => Ok(CalibrationDry),
@@ -73,7 +72,7 @@ define_command! {
 impl FromStr for CalibrationOnePoint {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         if supper.starts_with("CAL,") {
             let rest = supper.get(4..).unwrap();
@@ -100,7 +99,7 @@ define_command! {
 impl FromStr for CalibrationLow {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         if supper.starts_with("CAL,LOW,") {
             let rest = supper.get(8..).unwrap();
@@ -127,7 +126,7 @@ define_command! {
 impl FromStr for CalibrationHigh {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         if supper.starts_with("CAL,HIGH,") {
             let rest = supper.get(9..).unwrap();
@@ -154,7 +153,7 @@ define_command! {
 impl FromStr for ProbeTypePointOne {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "K,0.1" => Ok(ProbeTypePointOne),
@@ -171,7 +170,7 @@ define_command! {
 impl FromStr for ProbeTypeOne {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "K,1.0" => Ok(ProbeTypeOne),
@@ -188,7 +187,7 @@ define_command! {
 impl FromStr for ProbeTypeTen {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "K,10.0" => Ok(ProbeTypeTen),
@@ -206,7 +205,7 @@ define_command! {
 impl FromStr for ProbeTypeState {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "K,?" => Ok(ProbeTypeState),
@@ -224,7 +223,7 @@ define_command! {
 impl FromStr for Reading {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "R" => Ok(Reading),
@@ -241,7 +240,7 @@ define_command! {
 impl FromStr for OutputDisableConductivity {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "O,EC,0" => Ok(OutputDisableConductivity),
@@ -258,7 +257,7 @@ define_command! {
 impl FromStr for OutputEnableConductivity {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "O,EC,1" => Ok(OutputEnableConductivity),
@@ -275,7 +274,7 @@ define_command! {
 impl FromStr for OutputDisableTds {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "O,TDS,0" => Ok(OutputDisableTds),
@@ -292,7 +291,7 @@ define_command! {
 impl FromStr for OutputEnableTds {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "O,TDS,1" => Ok(OutputEnableTds),
@@ -309,7 +308,7 @@ define_command! {
 impl FromStr for OutputDisableSalinity {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "O,S,0" => Ok(OutputDisableSalinity),
@@ -326,7 +325,7 @@ define_command! {
 impl FromStr for OutputEnableSalinity {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "O,S,1" => Ok(OutputEnableSalinity),
@@ -343,7 +342,7 @@ define_command! {
 impl FromStr for OutputDisableSpecificGravity {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "O,SG,0" => Ok(OutputDisableSpecificGravity),
@@ -360,7 +359,7 @@ define_command! {
 impl FromStr for OutputEnableSpecificGravity {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "O,SG,1" => Ok(OutputEnableSpecificGravity),
@@ -378,7 +377,7 @@ define_command! {
 impl FromStr for OutputState {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "O,?" => Ok(OutputState),
@@ -395,7 +394,7 @@ define_command! {
 impl FromStr for TemperatureCompensation {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         if supper.starts_with("T,") {
             let rest = supper.get(2..).unwrap();
@@ -423,7 +422,7 @@ define_command! {
 impl FromStr for CompensatedTemperatureValue {
     type Err = EzoError;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, EzoError> {
         let supper = s.to_uppercase();
         match supper.as_ref() {
             "T,?" => Ok(CompensatedTemperatureValue),

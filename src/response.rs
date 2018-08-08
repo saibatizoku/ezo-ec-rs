@@ -2,10 +2,10 @@
 //!
 //! Code modified from "Federico Mena Quintero <federico@gnome.org>"'s original.
 use std::fmt;
-use std::result;
 use std::str::FromStr;
 
-use ezo_common::errors::{ErrorKind, EzoError};
+use super::{ErrorKind, EzoError};
+
 use failure::ResultExt;
 
 pub use ezo_common::response::{
@@ -13,7 +13,6 @@ pub use ezo_common::response::{
     ResponseStatus, RestartReason,
 };
 
-pub type Result<T> = result::Result<T, EzoError>;
 
 /// Calibration status of the EC EZO chip.
 #[derive(Copy, Clone, PartialEq)]
@@ -26,7 +25,7 @@ pub enum CalibrationStatus {
 impl CalibrationStatus {
     /// Parses the result of the "Cal,?" command to query the device's
     /// calibration status.  Returns ...
-    pub fn parse(response: &str) -> Result<CalibrationStatus> {
+    pub fn parse(response: &str) -> Result<CalibrationStatus, EzoError> {
         if response.starts_with("?CAL,") {
             let rest = response.get(5..).unwrap();
             let mut split = rest.split(',');
@@ -75,7 +74,7 @@ pub struct CompensationValue(pub f64);
 impl CompensationValue {
     /// Parses the result of the "T,?" command to get the device's
     /// temperature compensation value.
-    pub fn parse(response: &str) -> Result<CompensationValue> {
+    pub fn parse(response: &str) -> Result<CompensationValue, EzoError> {
         if response.starts_with("?T,") {
             let rest = response.get(3..).unwrap();
             let val = f64::from_str(rest).context(ErrorKind::ResponseParse)?;
@@ -109,7 +108,7 @@ pub enum ProbeType {
 impl ProbeType {
     /// Parses the result of the "Cal,?" command to query the device's
     /// calibration status.  Returns ...
-    pub fn parse(response: &str) -> Result<ProbeType> {
+    pub fn parse(response: &str) -> Result<ProbeType, EzoError> {
         if response.starts_with("?K,") {
             let rest = response.get(3..).unwrap();
             let mut split = rest.split(',');
@@ -176,7 +175,7 @@ impl OutputStringStatus {
         }
     }
 
-    pub fn parse(response: &str) -> Result<OutputStringStatus> {
+    pub fn parse(response: &str) -> Result<OutputStringStatus, EzoError> {
         if response.starts_with("?O,") {
             let rest = response.get(3..).unwrap();
             let mut split = rest.split(',');
@@ -290,7 +289,7 @@ pub enum ProbeReading {
 }
 
 impl ProbeReading {
-    pub fn parse(response: &str) -> Result<ProbeReading> {
+    pub fn parse(response: &str) -> Result<ProbeReading, EzoError> {
         let mut split = response.split(",");
 
         let _one = if let Some(reading) = split.next() {
