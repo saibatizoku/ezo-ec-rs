@@ -22,8 +22,8 @@ const EZO_SENSOR_ADDR: u16 = 100; // could be specified as 0x64
 fn run() -> Result<(), Error> {
     let device_path = format!("/dev/i2c-{}", I2C_BUS_ID);
 
-    let mut dev = LinuxI2CDevice::new(&device_path, EZO_SENSOR_ADDR)
-        .context("Could not open I2C device")?;
+    let mut dev =
+        LinuxI2CDevice::new(&device_path, EZO_SENSOR_ADDR).context("Could not open I2C device")?;
 
     let status = OutputState.run(&mut dev)?;
 

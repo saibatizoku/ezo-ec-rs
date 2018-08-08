@@ -4,11 +4,12 @@ use std::str::FromStr;
 use std::thread;
 use std::time::Duration;
 
+use super::response::{
+    CalibrationStatus, CompensationValue, OutputStringStatus, ProbeReading, ProbeType,
+};
 use super::{ErrorKind, EzoError};
-use super::response::{CalibrationStatus, CompensationValue, OutputStringStatus, ProbeReading, ProbeType};
 
-use failure::{ResultExt};
-
+use failure::ResultExt;
 
 use ezo_common::{
     response::ResponseStatus, response_code, string_from_response_data, write_to_ezo, ResponseCode,
@@ -27,7 +28,6 @@ pub use ezo_common::command::{
 };
 /// I2C command for the EZO chip.
 pub use ezo_common::Command;
-
 
 define_command! {
     doc: "`CAL,?` command. Returns a `CalibrationStatus` response. Current calibration status.",

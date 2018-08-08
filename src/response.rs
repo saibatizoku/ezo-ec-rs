@@ -13,7 +13,6 @@ pub use ezo_common::response::{
     ResponseStatus, RestartReason,
 };
 
-
 /// Calibration status of the EC EZO chip.
 #[derive(Copy, Clone, PartialEq)]
 pub enum CalibrationStatus {
